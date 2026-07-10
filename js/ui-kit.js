@@ -38,7 +38,7 @@ function crumbAct(a) {
 /* ── Historial interno (solo en memoria; sin localStorage) ── */
 var navHist = [], _navBack = false;
 function _vistaVisible() {
-  return ['home-view', 'comp-view', 'team-view', 'player-view'].filter(function (v) {
+  return ['home-view', 'comp-view', 'team-view', 'player-view', 'settings-view'].filter(function (v) {
     return !document.getElementById(v).classList.contains('hidden');
   })[0];
 }

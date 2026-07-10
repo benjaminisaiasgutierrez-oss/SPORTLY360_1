@@ -21,13 +21,13 @@
     var _scrollMem = {};
     function olvidarScroll(id) { delete _scrollMem[id]; }
     function mostrar(id) {
-      var vistas = ['home-view', 'comp-view', 'team-view', 'player-view'];
+      var vistas = ['home-view', 'comp-view', 'team-view', 'player-view', 'settings-view'];
       var actual = vistas.filter(function(v) { return !document.getElementById(v).classList.contains('hidden'); })[0];
       if (actual && actual !== id) _scrollMem[actual] = window.scrollY;   /* guarda al salir */
       vistas.forEach(function(v) {
         document.getElementById(v).classList.toggle('hidden', v !== id);
       });
-      document.querySelector('.panel').classList.toggle('panel-home', id === 'home-view');   /* Inicio: panel oscuro */
+      document.querySelector('.panel').classList.toggle('panel-home', id === 'home-view' || id === 'settings-view');   /* Inicio y Configuración: panel oscuro */
       if (_scrollMem[id] != null) window.scrollTo({ top: _scrollMem[id], behavior: 'auto' });   /* restaura */
       else window.scrollTo({ top: 0, behavior: 'smooth' });
     }

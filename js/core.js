@@ -58,8 +58,8 @@
       document.getElementById('nav-copas').innerHTML = copas;
       /* Más (preparado para futuras versiones; Toast "próximamente") */
       document.getElementById('nav-extra').innerHTML =
-        sbItem('config', 'Configuración', 'sbAccion(\'prox\')', false) +
-        sbItem('perfil', 'Perfil', 'sbAccion(\'prox\')', false) +
+        sbItem('config', 'Configuración', 'sbAccion(\'config\')', false) +
+        sbItem('perfil', 'Perfil', 'sbAccion(\'config\')', false) +
         sbItem('ayuda', 'Ayuda', 'sbAccion(\'prox\')', false) +
         sbItem('acerca', 'Acerca de', 'sbAccion(\'prox\')', false);
     }
@@ -70,6 +70,7 @@
       if (k === 'buscar') { irInicio(); setTimeout(function() { var i = document.getElementById('ds-input'); if (i) i.focus(); }, 120); return; }
       if (k === 'fav')    { irInicio(); setTimeout(function() { dashAccion('fav'); }, 150); return; }
       if (k === 'cal')    { toast('Calendario disponible próximamente.'); return; }
+      if (k === 'config') { irConfig(); return; }
       toast('Función próximamente.');
     }
 
