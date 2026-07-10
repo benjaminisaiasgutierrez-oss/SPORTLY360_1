@@ -63,11 +63,11 @@
     /* ── Animaciones (barras + contadores) ── */
     function animarBarras() {
       setTimeout(function () {
-        document.querySelectorAll('#player-view .pp-bar > span[data-w]').forEach(function (s) { s.style.width = s.getAttribute('data-w') + '%'; });
+        document.querySelectorAll('#player-view .pp-bar > span[data-w], #team-view .pp-bar > span[data-w]').forEach(function (s) { s.style.width = s.getAttribute('data-w') + '%'; });
       }, 60);
     }
     function animarContadores() {
-      document.querySelectorAll('#player-view .pp-num').forEach(function (el) {
+      document.querySelectorAll('#player-view .pp-num, #team-view .pp-num').forEach(function (el) {
         var to = parseFloat(el.getAttribute('data-to')), dec = parseInt(el.getAttribute('data-dec')) || 0, suf = el.getAttribute('data-suf') || '', ini = null;
         function step(ts) {
           if (!ini) ini = ts;

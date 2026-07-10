@@ -1,6 +1,6 @@
 /* SPORTLY360° · js/team.js — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
     /* ═══ VISTA DE EQUIPO (Jugadores / Generales / Avanzadas) ═══ */
-    var teamName = null, teamSeason = null, teamRow = null, teamStats = null, teamPlayers = [];
+    var teamName = null, teamSeason = null, teamRow = null, teamStats = null, teamPlayers = [], teamInfo = null;
 
     var teamFrom = 'comp';
     function verEquipo(equipo) { teamFrom = 'comp'; loadTeam(equipo, currentSeason); }
@@ -16,10 +16,12 @@
       var r = await Promise.all([
         sb.from('posiciones').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1),
         sb.from('plantilla').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name),
-        sb.from('equipo_stats').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1)
+        sb.from('equipo_stats').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1),
+        sb.from('equipos_info').select('*').eq('equipo', name).limit(1)
       ]);
       teamRow = (r[0].data || [])[0] || null;
       teamStats = (r[2].data || [])[0] || null;
+      teamInfo = (r[3].data || [])[0] || null;
       var posOrden = { Goalkeeper: 0, Defender: 1, Midfielder: 2, Attacker: 3 };
       teamPlayers = (r[1].data || []).sort(function(a, b) {
         var pa = posOrden[a.posicion], pb = posOrden[b.posicion];
@@ -34,6 +36,7 @@
       var t = teamRow;
       if (!t) { document.getElementById('team-view').innerHTML = emptyState('vacio', 'Sin datos del equipo', 'No hay información de este equipo en esta temporada. Prueba con otra temporada.'); return; }
       var es = teamStats || {};
+      var ei = teamInfo || {};
       var pj = t.played || 0;
 
       /* Métricas derivadas (solo con datos ya cargados; null si falta el denominador) */
@@ -123,10 +126,11 @@
           ['Entradas', nd(null)], ['Duelos ganados', nd(null)], ['Amarillas', pvCard(es.amarillas, 'c-yellow')], ['Rojas', pvCard(es.rojas, 'c-red')]
         ]) +
         ppSection(TI.info, 'Información general', [
-          ['Nombre', t.equipo], ['Nombre corto', nd(null)], ['País', nd(pais)], ['Fundación', nd(null)],
-          ['Estadio', nd(null)], ['Capacidad', nd(null)], ['Ciudad', nd(null)], ['Entrenador', nd(null)], ['Colores', nd(null)]
+          ['Nombre', t.equipo], ['Nombre corto', nd(ei.codigo)], ['País', nd(ei.pais || pais)], ['Fundación', nd(ei.fundacion)],
+          ['Estadio', nd(ei.estadio)], ['Capacidad', ei.capacidad != null ? Number(ei.capacidad).toLocaleString('es-CL') : nd(null)],
+          ['Ciudad', nd(ei.ciudad)], ['Entrenador', nd(ei.entrenador)], ['Colores', nd(null)]
         ]) +
-        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada y métricas derivadas. La info institucional (estadio, fundación, entrenador…) y tiros/córners/posesión quedan como "Sin datos", listos para futuras integraciones (endpoint <code>/teams</code>).</div>';
+        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada y métricas derivadas. Tiros, córners y posesión de equipo quedan como "Sin datos" (no publicados por la API).</div>';
 
       document.getElementById('team-view').innerHTML = hero +
         '<div class="cc-chips" id="team-chips" role="group" aria-label="Secciones del equipo">' +
