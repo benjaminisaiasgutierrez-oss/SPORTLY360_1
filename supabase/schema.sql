@@ -101,3 +101,60 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- ─── 6. DATOS DEPORTIVOS (competiciones / posiciones / goleadores) ──
+--  Poblado desde API-Football (api-sports.io). Lectura pública, escritura
+--  solo vía service_role (script de sincronización, no desde el cliente).
+create table if not exists public.competiciones (
+  id      text primary key,
+  nombre  text not null,
+  logo    text,
+  tipo    text not null check (tipo in ('league','cup')),
+  pais    text,
+  orden   int not null default 0
+);
+alter table public.competiciones enable row level security;
+drop policy if exists "competiciones_select_all" on public.competiciones;
+create policy "competiciones_select_all" on public.competiciones for select using (true);
+
+create table if not exists public.posiciones (
+  id              bigint generated always as identity primary key,
+  competicion_id  text not null references public.competiciones(id) on delete cascade,
+  temporada       text not null,
+  grupo           text,
+  rank            int,
+  equipo          text not null,
+  logo            text,
+  played          int,
+  win             int,
+  draw            int,
+  lose            int,
+  gf              int,
+  ga              int,
+  gd              int,
+  points          int,
+  form            text
+);
+create index if not exists idx_posiciones_comp_temp on public.posiciones(competicion_id, temporada);
+alter table public.posiciones enable row level security;
+drop policy if exists "posiciones_select_all" on public.posiciones;
+create policy "posiciones_select_all" on public.posiciones for select using (true);
+
+create table if not exists public.goleadores (
+  id              bigint generated always as identity primary key,
+  competicion_id  text not null references public.competiciones(id) on delete cascade,
+  temporada       text not null,
+  rank            int,
+  jugador         text not null,
+  equipo          text,
+  team_logo       text,
+  foto            text,
+  goles           int,
+  asistencias     int,
+  amarillas       int,
+  rojas           int
+);
+create index if not exists idx_goleadores_comp_temp on public.goleadores(competicion_id, temporada);
+alter table public.goleadores enable row level security;
+drop policy if exists "goleadores_select_all" on public.goleadores;
+create policy "goleadores_select_all" on public.goleadores for select using (true);
