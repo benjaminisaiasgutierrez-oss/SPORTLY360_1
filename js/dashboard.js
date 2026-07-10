@@ -47,74 +47,81 @@
       else toast('Función próximamente.');
     }
 
-    /* Render del dashboard */
+    /* Render del dashboard (v3.0: inicio rediseñado, identidad negro + lima) */
     function renderHome() {
       var nombre = (document.getElementById('greet-name') || {}).textContent || 'jugador';
       var fecha = new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
 
-      var cardDefs = [
-        [DICO.grid, 'Competiciones', 'Ligas y copas', 'comp'],
-        [DICO.target, 'Goleadores', 'Máximos anotadores', 'gol'],
-        [DICO.share, 'Asistencias', 'Próximamente', 'na'],
-        [DICO.calToday, 'Partidos de hoy', 'No disponible', 'cal'],
-        [DICO.clock, 'Próximos partidos', 'No disponible', 'cal'],
-        [DICO.flame, 'Partidos destacados', 'No disponible', 'cal'],
-        [DICO.star, 'Equipos favoritos', 'Ver tus guardados', 'fav'],
-        [DICO.user, 'Jugadores favoritos', 'Ver tus guardados', 'fav']
+      var chips = comps.map(function (c) {
+        return '<div class="h2-chip" role="button" tabindex="0" onclick="selectComp(\'' + c.id + '\')" onkeydown="navKey(event)"><img src="' + c.logo + '" alt="">' + c.nombre + '</div>';
+      }).join('');
+
+      var quickDefs = [
+        [DICO.target, 'Goleadores', 'gol', false],
+        [DICO.calToday, 'Partidos de hoy', 'cal', true],
+        [DICO.clock, 'Próximos partidos', 'cal', true],
+        [DICO.share, 'Asistencias', 'na', true]
       ];
-      var cards = cardDefs.map(function (c) {
-        return '<div class="dash-card" onclick="dashAccion(\'' + c[3] + '\')"><span class="dc-ico">' + dico(c[0]) + '</span>' +
-          '<div class="dc-t">' + c[1] + '</div><div class="dc-s">' + c[2] + '</div></div>';
+      var quick = quickDefs.map(function (q) {
+        return '<div class="h2-ql' + (q[3] ? ' soon' : '') + '" role="button" tabindex="0" onclick="dashAccion(\'' + q[2] + '\')" onkeydown="navKey(event)">' +
+          '<span class="h2-ql-ico">' + dico(q[0], 17) + '</span><span class="h2-ql-t">' + q[1] + '</span>' +
+          (q[3] ? '<span class="h2-ql-tag">Pronto</span>' : '') + '</div>';
       }).join('');
-      var qa = comps.map(function (c) {
-        return '<div class="qa-btn" onclick="selectComp(\'' + c.id + '\')"><img src="' + c.logo + '" alt="">' + c.nombre + '</div>';
-      }).join('');
-      var sk = function () { return '<div class="qstat"><div class="qs-v"><span class="sk" style="display:inline-block;width:70%;height:15px"></span></div><div class="qs-k"><span class="sk" style="display:inline-block;width:50%;height:9px;margin-top:5px"></span></div></div>'; };
 
       document.getElementById('home-view').innerHTML =
-        '<div class="dash-head"><div><div class="dash-hi">Hola, ' + nombre + '</div>' +
-          '<div class="dash-sub"><span>' + cap(fecha) + '</span><span>Temporada <b>' + tempActual() + '</b></span></div></div></div>' +
-        '<div class="dash-search"><span class="ds-ico">' + dico(DICO.search, 18) + '</span>' +
+        '<div class="h2-hero"><div class="h2-hi">Hola, ' + nombre + '</div>' +
+          '<div class="h2-sub">' + cap(fecha) + '<span class="h2-dot">&middot;</span>Temporada <b>' + tempActual() + '</b></div></div>' +
+
+        '<div class="h2-search"><span class="ds-ico">' + dico(DICO.search, 18) + '</span>' +
           '<input id="ds-input" type="text" placeholder="Buscar jugadores, equipos o competiciones…" oninput="dsBuscar(this.value)" onblur="setTimeout(cerrarBuscador,180)">' +
           '<div id="ds-results" class="dash-results hidden"></div></div>' +
-        '<div class="dash-title">Explorar</div><div class="dash-grid">' + cards + '</div>' +
-        '<div class="dash-title" id="qa-anchor">Accesos rápidos</div><div class="qa-grid">' + qa + '</div>' +
-        '<div class="dash-title">Estadísticas rápidas</div><div class="qstat-grid" id="qstats">' + sk() + sk() + sk() + sk() + sk() + '</div>' +
-        '<div class="dash-title" id="fav-anchor">Tus favoritos</div><div id="fav-section"></div>' +
-        '<div class="dash-title">Actividad reciente</div><div class="tv-note">No hay actividad reciente.</div>';
+
+        '<div class="h2-title" id="qa-anchor">Competiciones</div><div class="h2-chips">' + chips + '</div>' +
+
+        '<div class="h2-title">Destacado</div><div class="h2-feature" id="h2-feature"><div class="tv-note">Cargando…</div></div>' +
+
+        '<div class="h2-cols">' +
+          '<div class="h2-col"><div class="h2-title" id="fav-anchor">Tus favoritos</div><div id="fav-section"></div></div>' +
+          '<div class="h2-col"><div class="h2-title">Accesos rápidos</div><div class="h2-quicklist">' + quick + '</div></div>' +
+        '</div>';
 
       cargarDestacados();
       renderFavoritos();   /* v1.1: pinta la sección de favoritos (se refresca al cargar sesión) */
     }
 
-    /* Estadísticas rápidas de una liga destacada (datos reales; cacheado, sin re-consultar) */
+    /* Tarjeta destacada de la liga principal (datos reales; cacheado, sin re-consultar) */
     var featCache = null;
     async function cargarDestacados() {
+      var box = document.getElementById('h2-feature');
+      if (!box) return;
       var fc = comps.find(function (c) { return c.tipo === 'league'; });
-      if (!fc) return;
+      if (!fc) { box.innerHTML = '<div class="tv-note">Sin competiciones destacadas.</div>'; return; }
       var temp = Object.keys(seasonsMap[fc.id] || {}).sort().reverse()[0];
       if (!featCache || featCache.id !== fc.id || featCache.temp !== temp) {
         var r = await Promise.all([
           sb.from('posiciones').select('equipo,gf,ga,rank').eq('competicion_id', fc.id).eq('temporada', temp),
           sb.from('goleadores').select('jugador,goles').eq('competicion_id', fc.id).eq('temporada', temp).order('rank').limit(1)
         ]);
-        featCache = { id: fc.id, temp: temp, pos: r[0].data || [], gol: (r[1].data || [])[0] || null, nombre: fc.nombre };
+        featCache = { id: fc.id, temp: temp, pos: r[0].data || [], gol: (r[1].data || [])[0] || null, nombre: fc.nombre, logo: fc.logo };
       }
-      var pos = featCache.pos, box = document.getElementById('qstats');
-      if (!box) return;
-      if (!pos.length) { box.innerHTML = '<div class="tv-note">Sin datos.</div>'; return; }
+      var pos = featCache.pos;
+      var head = '<div class="h2-feat-head" role="button" tabindex="0" onclick="selectComp(\'' + fc.id + '\')" onkeydown="navKey(event)">' +
+        '<img src="' + featCache.logo + '" alt=""><div><div class="h2-feat-name">' + featCache.nombre + '</div>' +
+        '<div class="h2-feat-sub">Temporada ' + temp + '</div></div><span class="h2-feat-go">Ver competición →</span></div>';
+      if (!pos.length) { box.innerHTML = head + '<div class="tv-note" style="margin-top:14px">Sin datos.</div>'; return; }
       var lider = pos.reduce(function (a, b) { return b.rank < a.rank ? b : a; });
       var atk = pos.reduce(function (a, b) { return b.gf > a.gf ? b : a; });
       var def = pos.reduce(function (a, b) { return b.ga < a.ga ? b : a; });
       var prom = (pos.reduce(function (s, t) { return s + (t.gf || 0); }, 0) / pos.length).toFixed(1);
       var top = featCache.gol;
-      var qs = function (ico, v, k) { return '<div class="qstat"><span class="qs-ico">' + dico(ico, 16) + '</span><div class="qs-v">' + v + '</div><div class="qs-k">' + k + ' &middot; ' + featCache.nombre + '</div></div>'; };
-      box.innerHTML =
-        qs(DICO.target, top ? top.jugador + ' (' + top.goles + ')' : nd(null), 'Máximo goleador') +
-        qs(DICO.flame, atk.equipo, 'Mejor ataque') +
-        qs(DICO.shield, def.equipo, 'Mejor defensa') +
-        qs(DICO.trophy, lider.equipo, 'Líder') +
-        qs(DICO.share, prom, 'Prom. goles/equipo');
+      var stat = function (ico, k, v) { return '<div class="h2-stat"><span class="h2-stat-ico">' + dico(ico, 16) + '</span><div class="h2-stat-v">' + v + '</div><div class="h2-stat-k">' + k + '</div></div>'; };
+      box.innerHTML = head + '<div class="h2-feat-stats">' +
+        stat(DICO.trophy, 'Líder', lider.equipo) +
+        stat(DICO.target, 'Goleador', top ? top.jugador + ' (' + top.goles + ')' : nd(null)) +
+        stat(DICO.flame, 'Mejor ataque', atk.equipo) +
+        stat(DICO.shield, 'Mejor defensa', def.equipo) +
+        stat(DICO.share, 'Prom. goles', prom) +
+      '</div>';
     }
 

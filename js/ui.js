@@ -27,6 +27,7 @@
       vistas.forEach(function(v) {
         document.getElementById(v).classList.toggle('hidden', v !== id);
       });
+      document.querySelector('.panel').classList.toggle('panel-home', id === 'home-view');   /* Inicio: panel oscuro */
       if (_scrollMem[id] != null) window.scrollTo({ top: _scrollMem[id], behavior: 'auto' });   /* restaura */
       else window.scrollTo({ top: 0, behavior: 'smooth' });
     }

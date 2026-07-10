@@ -1,0 +1,112 @@
+/* SPORTLY360° · css/home.css — Rediseño del inicio (identidad negro + lima). */
+
+/* El panel central es blanco por defecto (resto de la app); en Inicio pasa a oscuro. */
+.panel.panel-home {
+  background: #0a0a0a;
+  color: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 40px rgba(0,0,0,.6);
+}
+
+/* ─── Hero: saludo + fecha ─── */
+.h2-hero { padding-top: 2px; }
+.h2-hi { font-size: 26px; font-weight: 800; letter-spacing: -.6px; color: #fff; }
+.h2-sub { font-size: 12.5px; color: var(--txt-dim); margin-top: 6px; }
+.h2-sub .h2-dot { margin: 0 6px; opacity: .5; }
+.h2-sub b { color: #fff; font-weight: 700; }
+
+/* ─── Buscador (variante oscura) ─── */
+.h2-search { position: relative; margin: 20px 0 6px; }
+.h2-search input {
+  width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px; padding: 13px 14px 13px 44px; font-size: 14px; font-family: inherit;
+  color: #fff; outline: none; transition: border-color .15s, background .15s;
+}
+.h2-search input::placeholder { color: rgba(255,255,255,.3); }
+.h2-search input:focus { border-color: rgba(198,255,0,.5); background: rgba(255,255,255,.09); }
+.h2-search .ds-ico { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,.35); display: inline-flex; }
+
+.panel-home .dash-results { background: #141414; border-color: var(--line); box-shadow: 0 14px 34px rgba(0,0,0,.5); }
+.panel-home .ds-item { border-bottom-color: rgba(255,255,255,.06); }
+.panel-home .ds-item:hover { background: rgba(255,255,255,.05); }
+.panel-home .ds-item .ds-i { color: rgba(255,255,255,.4); }
+.panel-home .ds-item .ds-n { color: #fff; }
+.panel-home .ds-item .ds-c { color: var(--txt-dim); }
+.panel-home .ds-empty { color: var(--txt-dim); }
+
+/* ─── Títulos de sección ─── */
+.panel-home .dash-title, .h2-title {
+  font-size: 12px; font-weight: 800; color: rgba(255,255,255,.5);
+  text-transform: uppercase; letter-spacing: .8px; margin: 28px 2px 12px;
+}
+
+/* ─── Chips de competiciones (horizontal) ─── */
+.h2-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.h2-chip {
+  display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.09); border-radius: 99px; padding: 8px 16px 8px 8px;
+  cursor: pointer; font-size: 13px; font-weight: 700; color: #fff;
+  transition: border-color .15s, background .15s;
+}
+.h2-chip:hover { border-color: var(--accent); background: rgba(198,255,0,.06); }
+.h2-chip img { width: 24px; height: 24px; object-fit: contain; background: #fff; border-radius: 6px; padding: 2px; }
+
+/* ─── Tarjeta destacada (spotlight de la liga principal) ─── */
+.h2-feature {
+  background: linear-gradient(160deg, rgba(198,255,0,.08), rgba(255,255,255,.03));
+  border: 1px solid var(--line); border-radius: 16px; padding: 20px;
+}
+.h2-feat-head { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.h2-feat-head img { width: 42px; height: 42px; object-fit: contain; background: #fff; border-radius: 10px; padding: 4px; flex-shrink: 0; }
+.h2-feat-name { font-size: 16px; font-weight: 800; color: #fff; }
+.h2-feat-sub { font-size: 11.5px; color: var(--txt-dim); margin-top: 2px; }
+.h2-feat-go { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.h2-feat-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 18px; }
+.h2-stat {
+  background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px; padding: 13px 14px;
+}
+.h2-stat-ico { color: var(--accent); display: inline-flex; margin-bottom: 8px; }
+.h2-stat-v { font-size: 14px; font-weight: 800; color: #fff; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h2-stat-k { font-size: 10px; color: var(--txt-dim); margin-top: 3px; text-transform: uppercase; letter-spacing: .3px; }
+
+/* ─── Dos columnas: favoritos | accesos rápidos ─── */
+.h2-cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: start; }
+
+/* Favoritos (variante oscura de fav-card / fav-empty) */
+.panel-home .fav-grid { grid-template-columns: repeat(2, 1fr); }
+.panel-home .fav-card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+.panel-home .fav-card:hover { border-color: var(--accent); box-shadow: 0 8px 22px rgba(0,0,0,.35); }
+.panel-home .fav-card img { background: rgba(255,255,255,.06); }
+.panel-home .fav-card .fav-ph { color: rgba(255,255,255,.25); }
+.panel-home .fav-card .fav-n { color: #fff; }
+.panel-home .fav-card .fav-c { color: var(--txt-dim); }
+.panel-home .fav-empty { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.12); color: var(--txt-dim); }
+.panel-home .fav-empty-ico { color: rgba(255,255,255,.25); }
+.panel-home .fav-btn { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: rgba(255,255,255,.4); }
+
+/* Accesos rápidos (lista compacta, con badge "Pronto") */
+.h2-quicklist { display: flex; flex-direction: column; gap: 8px; }
+.h2-ql {
+  display: flex; align-items: center; gap: 11px; background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 11px 13px;
+  cursor: pointer; transition: border-color .15s, background .15s;
+}
+.h2-ql:hover { border-color: var(--accent); background: rgba(198,255,0,.05); }
+.h2-ql-ico { color: var(--accent); display: inline-flex; flex-shrink: 0; }
+.h2-ql-t { font-size: 13.5px; font-weight: 700; color: #fff; }
+.h2-ql-tag {
+  margin-left: auto; font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .3px; color: var(--txt-dim); background: rgba(255,255,255,.06);
+  border-radius: 99px; padding: 3px 9px;
+}
+.h2-ql.soon { opacity: .75; }
+
+.panel-home .tv-note { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.12); color: var(--txt-dim); }
+.panel-home .sk { background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.1) 37%, rgba(255,255,255,.05) 63%); background-size: 400% 100%; }
+
+@media (max-width: 820px) {
+  .h2-feat-stats { grid-template-columns: repeat(2, 1fr); }
+  .h2-cols { grid-template-columns: 1fr; }
+  .panel-home .fav-grid { grid-template-columns: 1fr; }
+}
