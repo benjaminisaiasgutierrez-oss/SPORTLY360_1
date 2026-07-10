@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPORTLY360&#xB0;</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --accent: #c6ff00;
+      --accent-glow: rgba(198,255,0,.4);
+      --radius: 10px;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 0;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: #fff;
+      overflow-y: auto;
+    }
+
+    /* ─── SPLASH ─── */
+    #splash {
+      position: fixed; inset: 0; z-index: 100;
+      background: #000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 24px;
+      transition: opacity 0.5s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+
+    @keyframes dropBounce {
+      0%   { opacity: 0; transform: translateY(-90px); }
+      58%  { opacity: 1; transform: translateY(9px); }
+      72%  { transform: translateY(-5px); }
+      83%  { transform: translateY(3px); }
+      92%  { transform: translateY(-1px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmerW {
+      0%   { transform: translateX(-150%); }
+      100% { transform: translateX(350%); }
+    }
+    @keyframes fadeBar {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    .sp-logo {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-size: 46px; font-weight: 800;
+      letter-spacing: -1.5px; line-height: 1;
+      display: flex; align-items: baseline;
+    }
+    .sp-w1 { display: inline-block; color: #c6ff00; animation: dropBounce 0.85s 0.1s cubic-bezier(.215,.61,.355,1) both; }
+    .sp-w2 { display: inline-block; color: #fff;    animation: dropBounce 0.85s 0.52s cubic-bezier(.215,.61,.355,1) both; }
+    .sp-bar {
+      width: 160px; height: 2px;
+      background: rgba(198,255,0,.12);
+      border-radius: 99px; overflow: hidden;
+      position: relative; opacity: 0;
+      animation: fadeBar 0.4s 0.95s both;
+    }
+    .sp-shimmer {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg,
+        transparent 0%, rgba(198,255,0,.2) 20%,
+        rgba(198,255,0,.9) 50%, rgba(198,255,0,.2) 80%, transparent 100%);
+      animation: shimmerW 1.5s 0.95s ease infinite;
+      border-radius: 99px;
+    }
+
+    /* ─── LOGIN ─── */
+    #login { width: 400px; max-width: 92vw; opacity: 0; transition: opacity 0.5s ease; }
+    #login.show { opacity: 1; }
+
+    .brand { text-align: center; margin-bottom: 22px; }
+    .brand-logo {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-size: 30px; font-weight: 800; letter-spacing: -1px;
+      display: inline-flex; align-items: baseline;
+    }
+    .brand-logo .l1 { color: var(--accent); }
+    .brand-logo .l2 { color: #fff; }
+
+    .heading { font-size: 26px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+    .subheading { font-size: 13px; color: rgba(255,255,255,.4); text-align: center; margin-bottom: 28px; }
+
+    .error-box {
+      display: none;
+      background: rgba(218,54,51,.08); border: 1px solid rgba(218,54,51,.22);
+      color: #ff7b72; padding: 9px 13px;
+      border-radius: var(--radius); font-size: 12.5px; margin-bottom: 12px;
+    }
+    .error-box.show { display: block; }
+
+    /* botón Google */
+    .btn-google {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #fff; color: #1f1f1f;
+      border: none; border-radius: var(--radius);
+      padding: 12px; font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: opacity .2s;
+    }
+    .btn-google:hover { opacity: .9; }
+    .btn-google svg { width: 18px; height: 18px; }
+
+    /* botón Apple */
+    .btn-apple {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #000; color: #fff;
+      border: 1px solid rgba(255,255,255,.25); border-radius: var(--radius);
+      padding: 12px; font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: inherit; margin-top: 12px; transition: background .2s;
+    }
+    .btn-apple:hover { background: #1a1a1a; }
+    .btn-apple svg { width: 17px; height: 17px; margin-top: -2px; }
+  </style>
+</head>
+<body>
+
+  <!-- SPLASH -->
+  <div id="splash">
+    <div class="sp-logo">
+      <span class="sp-w1">SPORTLY</span><span class="sp-w2">360&#xB0;</span>
+    </div>
+    <div class="sp-bar"><div class="sp-shimmer"></div></div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login">
+    <div class="brand"><div class="brand-logo"><span class="l1">SPORTLY</span><span class="l2">360&#xB0;</span></div></div>
+
+    <div class="heading">Bienvenido</div>
+    <div class="subheading">Inicia sesi&#xF3;n para vivir el deporte 360&#xB0;</div>
+
+    <div id="login-err" class="error-box"></div>
+
+    <button class="btn-google" onclick="loginGoogle()">
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      Continuar con Google
+    </button>
+
+    <button class="btn-apple" onclick="loginApple()">
+      <svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg" fill="#fff">
+        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+      </svg>
+      Continuar con Apple
+    </button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /* ── Cliente Supabase (la anon key es pública por diseño) ── */
+    const SB_URL  = 'https://scixksgcbqumhygvdmal.supabase.co';
+    const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjaXhrc2djYnF1bWh5Z3ZkbWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2OTU4MTYsImV4cCI6MjA5OTI3MTgxNn0.xwouydzxHVLgxBXHyfFaUhr0Y09JjMwRI6rnW08x4o0';
+    const sb = window.supabase.createClient(SB_URL, SB_ANON);
+
+    /* ── Splash ── */
+    setTimeout(function() {
+      document.getElementById('splash').classList.add('hide');
+      document.getElementById('login').classList.add('show');
+    }, 3000);
+
+    /* Si ya hay sesión activa, entra directo */
+    sb.auth.getSession().then(function(res) {
+      if (res.data.session) irAInicio(res.data.session.user);
+    });
+
+    function irAInicio(user) {
+      var m = (user && user.user_metadata) || {};
+      var nombre = [m.nombre, m.apellido].filter(Boolean).join(' ') || (user ? user.email : '');
+      window.location.href = 'inicio.html?nombre=' + encodeURIComponent(nombre);
+    }
+
+    function showErr(id, msg) {
+      var el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+    function clearErr(id) { document.getElementById(id).classList.remove('show'); }
+
+    /* ── Login con Google (Supabase OAuth) ──
+       Funciona cuando el proveedor Google esté habilitado en Supabase
+       (Authentication → Providers → Google). */
+    async function loginGoogle() {
+      clearErr('login-err');
+      var res = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/inicio.html' }
+      });
+      if (res.error) showErr('login-err', 'El acceso con Google aún no está configurado en Supabase.');
+    }
+
+    /* ── Login con Apple (Supabase OAuth) ── */
+    async function loginApple() {
+      clearErr('login-err');
+      var res = await sb.auth.signInWithOAuth({
+        provider: 'apple',
+        options: { redirectTo: window.location.origin + '/inicio.html' }
+      });
+      if (res.error) showErr('login-err', 'El acceso con Apple aún no está configurado en Supabase.');
+    }
+  </script>
+</body>
+</html>

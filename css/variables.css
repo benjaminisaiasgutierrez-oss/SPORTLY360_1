@@ -1,0 +1,10 @@
+/* SPORTLY360° · css/variables.css — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
+    :root {
+      --accent: #c6ff00;
+      --acc-dark: #5f7d00;   /* lima oscuro, legible sobre blanco */
+      --bg: #000;
+      --card: #0d0d0d;
+      --line: rgba(255,255,255,.08);
+      --txt-dim: rgba(255,255,255,.45);
+      --radius: 12px;
+    }

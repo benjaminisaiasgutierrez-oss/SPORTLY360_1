@@ -1,0 +1,6 @@
+/* SPORTLY360° · css/layout.css — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
+    /* ─── LAYOUT ─── */
+    .layout { display: flex; min-height: 100vh; align-items: flex-start; }
+    /* Columna del contenido: breadcrumb global + panel comparten el mismo ancho */
+    .main-col { width: 100%; max-width: 860px; min-width: 0; }
+

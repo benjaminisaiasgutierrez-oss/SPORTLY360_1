@@ -1,0 +1,3 @@
+/* SPORTLY360° · css/animations.css — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
+    @keyframes ppFade { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+    @keyframes skl { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }

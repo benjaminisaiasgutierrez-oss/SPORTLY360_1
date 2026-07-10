@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPORTLY360&#xB0; &middot; Estad&iacute;sticas</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/competition.css">
+  <link rel="stylesheet" href="css/team.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/favorites.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/polish.css">
+</head>
+<body>
+  <div class="layout">
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="sidebar" aria-label="Men&uacute; principal">
+      <div class="sidebar-top">
+        <div class="logo"><span class="l1">SPORTLY</span><span class="l2">360&#xB0;</span></div>
+        <button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" aria-expanded="true" aria-label="Contraer men&uacute;"></button>
+      </div>
+
+      <div class="nav-scroll">
+        <div class="nav-list" id="nav-main"></div>
+        <div class="nav-label">Ligas</div>
+        <div class="nav-list" id="nav-ligas"></div>
+        <div class="nav-label">Copas UEFA</div>
+        <div class="nav-list" id="nav-copas"></div>
+        <div class="nav-label">M&aacute;s</div>
+        <div class="nav-list" id="nav-extra"></div>
+      </div>
+
+      <div class="sidebar-footer" id="sb-footer"></div>
+    </aside>
+
+    <!-- ─── CONTENIDO ─── -->
+    <main class="main">
+     <div class="main-col">
+      <!-- Breadcrumb GLOBAL: pertenece al layout, nunca al contenido dinámico -->
+      <div id="crumbs-global" class="crumbs-bar hidden"></div>
+     <div class="panel">
+      <!-- Dashboard / pantalla de inicio -->
+      <div id="home-view"></div>
+
+      <!-- Vista de competición · Competition Center -->
+      <div id="comp-view" class="hidden">
+        <div id="cc-hero"></div>
+        <div class="cc-chips" id="cc-chips" role="group" aria-label="Secciones de la competici&oacute;n"></div>
+
+        <div id="view-stats">
+          <div id="cc-stats"></div>
+        </div>
+
+        <div id="view-tabla" class="hidden">
+          <div id="tabla-cont"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+
+        <div id="view-gol" class="hidden">
+          <div class="cc-search"><span class="cc-si" id="cc-si"></span><input id="gol-filter" type="text" placeholder="Buscar jugador o equipo&hellip;" oninput="filtrarGoleadores(this.value)" aria-label="Buscar goleador"></div>
+          <div class="card" id="scorers"></div>
+        </div>
+
+        <div id="view-asis" class="hidden">
+          <div id="assists"></div>
+        </div>
+      </div>
+
+      <!-- Vista de equipo (se llena al hacer clic en un equipo) -->
+      <div id="team-view" class="hidden"></div>
+
+      <!-- Vista de jugador (se llena al hacer clic en un jugador) -->
+      <div id="player-view" class="hidden"></div>
+     </div><!-- /panel -->
+     </div><!-- /main-col -->
+    </main>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/competition.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/ui-kit.js"></script>
+  <script src="js/team.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/favorites.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

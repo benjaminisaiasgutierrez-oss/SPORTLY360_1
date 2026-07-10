@@ -1,0 +1,11 @@
+/* SPORTLY360° · css/base.css — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+

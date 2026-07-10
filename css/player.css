@@ -1,0 +1,69 @@
+/* SPORTLY360° · css/player.css — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
+    /* ═══ PERFIL DE JUGADOR (rediseño · clases .pp-*) ═══ */
+    .pp-hero {
+      margin: -26px -28px 4px; padding: 24px 28px 22px;
+      background: radial-gradient(130% 150% at 88% -30%, rgba(198,255,0,.18), transparent 55%), #0b0e0c;
+      color: #fff; border-radius: 18px 18px 0 0;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+      animation: ppFade .4s ease both;
+    }
+    .pp-photo { width: 84px; height: 84px; flex-shrink: 0; }
+    .pp-photo .ph-wrap { width: 84px; height: 84px; }
+    .pp-photo .ph-init { font-size: 28px; }
+    .pp-hero-info { flex: 1; min-width: 180px; }
+    .pp-name { font-size: 27px; font-weight: 800; letter-spacing: -.6px; line-height: 1.05; }
+    .pp-team { font-size: 13px; color: rgba(255,255,255,.6); margin-top: 5px; display: flex; align-items: center; gap: 7px; }
+    .pp-team img { width: 18px; height: 18px; object-fit: contain; }
+    .pp-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .pp-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.13);
+      border-radius: 99px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: #fff;
+    }
+    .pp-chip .lime { color: var(--accent); }
+    .pp-hero .season-nav { margin-left: auto; }
+    .pp-hero .season-nav .sp-nav { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.16); color: #fff; }
+    .pp-hero .season-nav .sp-nav:hover:not(:disabled) { background: rgba(255,255,255,.2); color: #fff; }
+    .pp-hero .season-nav .sp-nav:disabled { opacity: .3; }
+
+    .pp-title {
+      font-size: 12.5px; font-weight: 800; color: #14171a; text-transform: uppercase;
+      letter-spacing: .6px; margin: 24px 2px 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .pp-title .pp-tico { color: var(--acc-dark); display: inline-flex; }
+    .pp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .pp-card {
+      background: #f7f8fa; border: 1px solid #eceef0; border-radius: 12px; padding: 13px 14px;
+      animation: ppFade .4s ease both;
+    }
+    .pp-card .pp-v { font-size: 19px; font-weight: 800; color: #14171a; line-height: 1.15; }
+    .pp-card .pp-k { font-size: 10.5px; color: #8a9098; margin-top: 3px; text-transform: uppercase; letter-spacing: .3px; }
+    .pp-bar { height: 5px; background: #e9ebee; border-radius: 99px; margin-top: 10px; overflow: hidden; }
+    .pp-bar > span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .8s cubic-bezier(.22,.61,.36,1); }
+
+    /* Hero: rating destacado + stats rápidas */
+    .pp-hero-stats { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+    .pp-hstat { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 8px 15px; min-width: 66px; text-align: center; }
+    .pp-hstat .v { font-size: 21px; font-weight: 800; line-height: 1; }
+    .pp-hstat .k { font-size: 10px; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .4px; margin-top: 4px; }
+    .pp-hstat.pp-rating { background: var(--accent); border-color: var(--accent); }
+    .pp-hstat.pp-rating .v { color: #111; } .pp-hstat.pp-rating .k { color: rgba(0,0,0,.55); }
+
+    /* Insignias automáticas */
+    .pp-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 2px 0; }
+    .pp-badge { display: inline-flex; align-items: center; gap: 7px; background: #f2f7dd; border: 1px solid #dbe8a8; color: #3e4a12; border-radius: 99px; padding: 6px 13px; font-size: 12.5px; font-weight: 700; animation: ppFade .4s ease both; }
+
+    /* Tarjeta mejorada: icono, hover, descripción, barra con degradado */
+    .pp-card { position: relative; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .pp-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.08); border-color: #d7dde1; }
+    .pp-cico { color: var(--acc-dark); display: inline-flex; margin-bottom: 9px; }
+    .pp-desc { font-size: 10.5px; color: #9aa0a6; margin-top: 5px; line-height: 1.3; }
+    .pp-bar > span { background: linear-gradient(90deg, #9fce00, var(--accent)); }
+
+    /* Radar (SVG puro · tema negro + lima) */
+    .pp-radar-card { background: radial-gradient(120% 130% at 80% -20%, rgba(198,255,0,.14), transparent 55%), #0b0e0c; border-radius: 16px; padding: 16px; margin-top: 4px; display: flex; align-items: center; justify-content: center; animation: ppFade .4s ease both; }
+    .pp-radar-card svg { width: 100%; max-width: 360px; height: auto; }
+    .pp-radar-empty { color: rgba(255,255,255,.55); font-size: 13px; padding: 26px; text-align: center; }
+    .pp-crest { background: rgba(255,255,255,.92); border-radius: 16px; padding: 10px; }
+    .pp-crest img { width: 100%; height: 100%; object-fit: contain; display: block; }
+

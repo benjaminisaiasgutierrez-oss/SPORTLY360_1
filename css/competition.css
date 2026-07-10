@@ -1,0 +1,205 @@
+/* SPORTLY360° · css/competition.css — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
+    /* ─── MAIN ─── */
+    .main { flex: 1; min-width: 0; padding: 22px 28px 60px; max-width: 880px; }
+
+    /* ─── COMPETITION CENTER (v2.1): chips de navegación estilo sidebar ─── */
+    .cc-chips { display: flex; gap: 8px; margin: 18px 0 16px; flex-wrap: wrap; }
+    .cc-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #17181a; border: 1px solid #2a2b2e; border-radius: 99px;
+      color: rgba(255,255,255,.65); font-family: inherit; font-size: 12.5px; font-weight: 700;
+      padding: 9px 16px; cursor: pointer; transition: all .15s ease;
+    }
+    .cc-chip .cc-ci { display: inline-flex; transition: transform .15s ease; }
+    .cc-chip:hover { color: #fff; border-color: rgba(198,255,0,.4); }
+    .cc-chip:hover .cc-ci { color: var(--accent); transform: scale(1.08); }
+    .cc-chip.active { background: #0b0e0c; border-color: var(--accent); color: #fff; }
+    .cc-chip.active .cc-ci { color: var(--accent); }
+
+    /* Buscador local de goleadores */
+    .cc-search {
+      display: flex; align-items: center; gap: 9px;
+      background: #f4f5f7; border: 1px solid #e4e6e9; border-radius: 12px;
+      padding: 10px 14px; margin-bottom: 12px; color: #8a9098;
+      transition: border-color .15s ease;
+    }
+    .cc-search:focus-within { border-color: var(--accent); }
+    .cc-search .cc-si { display: inline-flex; }
+    .cc-search input { flex: 1; border: none; background: none; outline: none; font-family: inherit; font-size: 13px; color: #14171a; }
+
+    /* Destacados clickables (reutiliza .adv-item) */
+    .adv-item.cc-lead { cursor: pointer; transition: background .15s ease; }
+    .adv-item.cc-lead:hover { background: #eef7d6; }
+    .cc-lead-logo { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; }
+    .cc-lead-dato { font-size: 12px; font-weight: 700; color: var(--acc-dark); white-space: nowrap; }
+
+    /* ─── TABLA DE POSICIONES ─── */
+    .card {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .5px; color: var(--txt-dim);
+      padding: 11px 6px; text-align: center; border-bottom: 1px solid var(--line);
+    }
+    thead th.team-col { text-align: left; padding-left: 12px; }
+    tbody td {
+      padding: 10px 6px; text-align: center; font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.03); }
+    .pos { font-weight: 700; width: 30px; position: relative; }
+    .team-cell {
+      display: flex; align-items: center; gap: 9px;
+      text-align: left; padding-left: 12px;
+    }
+    .team-cell img { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; }
+    .team-cell span { font-weight: 600; font-size: 13px; }
+    .pts { font-weight: 800; color: var(--accent); }
+    .dim { color: var(--txt-dim); }
+
+    td.pos.z-champ::before, td.pos.z-eur::before, td.pos.z-low::before, td.pos.z-rel::before {
+      content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 2px;
+    }
+    td.pos.z-champ::before { background: var(--accent); }
+    td.pos.z-eur::before   { background: #2979ff; }
+    td.pos.z-low::before   { background: rgba(255,255,255,.25); }
+    td.pos.z-rel::before   { background: #e53935; }
+
+    .form-row { display: flex; gap: 3px; justify-content: center; }
+    .form-dot {
+      width: 16px; height: 16px; border-radius: 4px; font-size: 9px;
+      font-weight: 800; display: flex; align-items: center; justify-content: center; color: #fff;
+    }
+    .f-W { background: #2e7d32; }
+    .f-D { background: #616161; }
+    .f-L { background: #c62828; }
+
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 14px; margin: 12px 4px 0;
+      font-size: 11px; color: var(--txt-dim);
+    }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+    /* ─── GOLEADORES ─── */
+    .scorer {
+      display: flex; align-items: center; gap: 13px;
+      padding: 11px 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .scorer:last-child { border-bottom: none; }
+    .scorer:hover { background: rgba(255,255,255,.03); }
+    .scorer .rk { width: 24px; font-weight: 800; font-size: 14px; color: var(--txt-dim); text-align: center; }
+    .scorer.top .rk { color: var(--accent); }
+    .scorer .ph {
+      width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+      background: #1a1a1a; flex-shrink: 0;
+    }
+    .scorer .info { flex: 1; min-width: 0; }
+    .scorer .nm { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .scorer .tm { font-size: 11.5px; color: var(--txt-dim); display: flex; align-items: center; gap: 5px; margin-top: 1px; }
+    .scorer .tm img { width: 14px; height: 14px; object-fit: contain; }
+    .scorer .stat { text-align: center; }
+    .scorer .goals { font-size: 18px; font-weight: 800; color: var(--accent); line-height: 1; }
+    .scorer .goals-l { font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: var(--txt-dim); }
+    .scorer .ast { font-size: 12px; color: rgba(255,255,255,.6); margin-left: 16px; text-align: center; }
+    .scorer .ast b { color: #fff; font-size: 14px; display: block; }
+
+    .hidden { display: none; }
+
+    /* ─── PANEL CENTRAL BLANCO Y CENTRADO ─── */
+    .main { max-width: none; padding: 28px 24px 60px; display: flex; justify-content: center; }
+    .panel {
+      width: 100%; max-width: 860px;
+      background: #fff; color: #14171a;
+      border-radius: 18px; padding: 26px 28px 36px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+    }
+    .panel .card { background: #fff; border-color: #e8eaed; }
+    .panel thead th { color: #8a9098; border-bottom-color: #eceef0; }
+    .panel tbody td { border-bottom-color: #f2f3f5; }
+    .panel tbody tr:hover { background: #f7f8fa; }
+    .panel .pts { color: var(--acc-dark); }
+    .panel .dim { color: #9aa0a6; }
+    .panel td.pos.z-low::before { background: #d4d7db; }
+    .panel .team-cell span { color: #14171a; }
+    .panel .scorer { border-bottom-color: #f2f3f5; }
+    .panel .scorer:hover { background: #f7f8fa; }
+    .panel .scorer .rk { color: #b0b5ba; }
+    .panel .scorer.top .rk { color: var(--acc-dark); }
+    .panel .scorer .nm { color: #14171a; }
+    .panel .scorer .tm { color: #8a9098; }
+    .panel .scorer .goals { color: var(--acc-dark); }
+    .panel .scorer .goals-l { color: #9aa0a6; }
+    .panel .scorer .ast { color: #6b7177; }
+    .panel .scorer .ast b { color: #14171a; }
+    .panel .legend { color: #8a9098; }
+    .panel .ph-wrap { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
+    .panel .ph-init {
+      position: absolute; inset: 0; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff; letter-spacing: .5px;
+    }
+    .panel .ph-wrap .ph { position: absolute; inset: 0; margin: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #eaeaea; }
+
+    /* selector de temporada */
+    /* selector de temporada navegable (3 visibles + flechas) */
+    .season-nav { display: flex; align-items: center; gap: 5px; margin-left: auto; flex-wrap: wrap; }
+    .season-nav .sp {
+      background: #f1f2f4; border: 1px solid #e4e6e9; color: #5a6066;
+      font-weight: 700; font-size: 12px; padding: 7px 11px; border-radius: 99px;
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .season-nav .sp:hover { border-color: #c2c7cc; color: #14171a; }
+    .season-nav .sp.active { background: var(--accent); color: #111; border-color: var(--accent); }
+    .season-nav .sp-nav {
+      width: 28px; height: 30px; border-radius: 8px; border: 1px solid #e4e6e9;
+      background: #f1f2f4; color: #5a6066; font-size: 16px; font-weight: 800; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; line-height: 1;
+    }
+    .season-nav .sp-nav:hover:not(:disabled) { border-color: #c2c7cc; color: #14171a; }
+    .season-nav .sp-nav:disabled { opacity: .35; cursor: default; }
+    .season-nav .sp-current {
+      background: var(--accent); color: #111; font-weight: 800; font-size: 12.5px;
+      padding: 7px 14px; border-radius: 99px; min-width: 80px; text-align: center;
+    }
+    /* tabla de estadísticas avanzadas */
+    .panel .stat-table td { text-align: left; padding: 11px 15px; font-size: 13px; }
+    .panel .stat-table td.st-v { text-align: right; font-weight: 800; }
+    .panel .stat-table tr.pend-row td.st-v { color: #9aa0a6; }
+    /* colores de tarjetas */
+    .c-yellow { color: #c9a400 !important; font-weight: 800; }
+    .c-red { color: #e53935 !important; font-weight: 800; }
+    .cd { display: inline-block; width: 11px; height: 14px; border-radius: 2px; vertical-align: middle; }
+    .cd-y { background: #ffcd00; }
+    .cd-r { background: #e53935; }
+
+    /* goleador seleccionable */
+    .panel .scorer.clickable { cursor: pointer; }
+    .panel .scorer.clickable:hover { background: #eef7d6; }
+
+    /* lista de estadísticas avanzadas (bonita, con íconos) */
+    .adv-list { border: 1px solid #eceef0; border-radius: 14px; overflow: hidden; }
+    .adv-item { display: flex; align-items: center; gap: 13px; padding: 13px 16px; border-bottom: 1px solid #f2f3f5; }
+    .adv-item:last-child { border-bottom: none; }
+    .adv-item:nth-child(even) { background: #fafbfc; }
+    .adv-ico { width: 24px; flex-shrink: 0; color: #14171a; display: inline-flex; align-items: center; justify-content: center; }
+    .adv-ico svg { display: block; }
+    .adv-name { flex: 1; font-size: 13px; color: #4a5058; font-weight: 600; }
+    .adv-val { font-size: 16px; font-weight: 800; color: #14171a; }
+    .adv-item.pend .adv-val { color: #b8bdc2; }
+    /* título de grupo (fase de grupos de copas antiguas) */
+    .group-title {
+      font-size: 12px; font-weight: 800; color: #6b7177;
+      text-transform: uppercase; letter-spacing: 1px; margin: 20px 4px 8px;
+    }
+    #tabla-cont .card + .group-title { margin-top: 22px; }
+    .loading { padding: 30px; text-align: center; color: #9aa0a6; font-size: 13px; }
+
+    /* fila de equipo clickable */
+    .panel .team-row { cursor: pointer; }
+    .panel .team-row:hover { background: #eef7d6; }
+

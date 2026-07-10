@@ -1,0 +1,43 @@
+/* SPORTLY360° · css/polish.css — capa de pulido v1.2 (UX/UI/accesibilidad).
+   Solo añade; no cambia identidad visual (negro, blanco, lima #c6ff00). */
+
+/* ── Breadcrumb GLOBAL (v2.0): vive en el Layout, sobre fondo negro ── */
+.crumbs-bar { display: flex; align-items: center; gap: 8px; margin: 2px 2px 14px; min-height: 30px; }
+.crumb-back {
+  background: none; border: 1px solid var(--line); border-radius: 9px;
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.6); cursor: pointer; flex-shrink: 0; transition: all .15s ease;
+}
+.crumb-back:hover { color: var(--accent); border-color: rgba(198,255,0,.4); }
+.crumbs { display: flex; align-items: center; flex-wrap: wrap; gap: 1px; }
+.crumbs .crumb {
+  background: none; border: none; font-family: inherit; font-size: 12.5px; font-weight: 600;
+  color: rgba(255,255,255,.55); cursor: pointer; padding: 4px 7px; border-radius: 7px; line-height: 1;
+  transition: color .15s ease, background .15s ease;
+}
+.crumbs .crumb:hover { color: #fff; background: rgba(255,255,255,.08); }
+.crumbs .crumb.cur { color: #fff; font-weight: 700; cursor: default; }
+.crumbs .crumb-sep { color: rgba(255,255,255,.25); display: inline-flex; align-items: center; }
+
+/* ── Skeletons (reutilizan la animación .sk existente en animations.css) ── */
+.sk-hero { height: 118px; border-radius: 18px; margin: -26px -28px 22px; }
+.sk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.sk-card { height: 74px; border-radius: 12px; }
+.sk-row { height: 42px; border-radius: 8px; margin: 6px; }
+@media (max-width: 620px) { .sk-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Empty states ── */
+.empty { text-align: center; padding: 34px 20px; }
+.empty-ico { display: inline-flex; color: #c8ccd1; margin-bottom: 10px; }
+.empty-t { font-size: 15px; font-weight: 800; color: #14171a; }
+.empty-d { font-size: 12.5px; color: #9aa0a6; margin-top: 5px; max-width: 340px; margin-left: auto; margin-right: auto; }
+
+/* ── Accesibilidad: foco visible (solo teclado) ── */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
+.nav-item:focus-visible, .qa-btn:focus-visible, .dash-card:focus-visible, .tab:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px;
+}
+
+/* ── Microinteracción: guardar/quitar favorito ── */
+@keyframes favPop { 0% { transform: scale(1); } 40% { transform: scale(1.28); } 100% { transform: scale(1); } }
+.fav-btn.pop { animation: favPop .22s ease; }

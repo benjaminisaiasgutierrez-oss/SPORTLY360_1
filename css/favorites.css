@@ -1,0 +1,28 @@
+/* SPORTLY360° · css/favorites.css — botón favorito + sección del dashboard (identidad negro/lima). */
+.fav-btn {
+  background: #f4f5f7; border: 1px solid #e4e6e9; border-radius: 10px;
+  width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #8a9098; transition: all .15s; flex-shrink: 0;
+}
+.fav-btn:hover { border-color: var(--accent); color: var(--acc-dark); }
+.fav-btn.on { border-color: var(--accent); }
+/* En el hero oscuro de los perfiles premium */
+.pp-hero .fav-btn { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: #fff; }
+.pp-hero .fav-btn:hover { border-color: var(--accent); }
+
+/* Sección de favoritos del dashboard */
+.fav-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.fav-card {
+  display: flex; align-items: center; gap: 11px; background: #fff; border: 1px solid #e8eaed;
+  border-radius: 12px; padding: 11px 13px; cursor: pointer;
+  transition: transform .18s, box-shadow .18s, border-color .18s; animation: ppFade .4s ease both;
+}
+.fav-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.08); border-color: var(--accent); }
+.fav-card img { width: 34px; height: 34px; object-fit: contain; border-radius: 8px; background: #f4f5f7; flex-shrink: 0; }
+.fav-card .fav-ph { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; color: #c2c7cc; flex-shrink: 0; }
+.fav-card .fav-info { min-width: 0; }
+.fav-card .fav-n { font-size: 13px; font-weight: 700; color: #14171a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-card .fav-c { font-size: 11px; color: #9aa0a6; margin-top: 2px; }
+.fav-empty { background: #f7f8fa; border: 1px dashed #dfe2e6; border-radius: 12px; padding: 22px; text-align: center; color: #8a9098; font-size: 13px; }
+.fav-empty-ico { display: inline-flex; color: #c2c7cc; vertical-align: middle; }
+@media (max-width: 820px) { .fav-grid { grid-template-columns: repeat(2, 1fr); } }
