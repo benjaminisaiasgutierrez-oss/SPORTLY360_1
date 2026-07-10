@@ -139,7 +139,10 @@
             '<div class="pp-name">' + p.jugador + '</div>' +
             '<div class="pp-team">' + (p.team_logo ? '<img src="' + p.team_logo + '" onerror="this.style.display=\'none\'">' : '') +
               (p.equipo || '') + ' &middot; ' + currentComp.nombre + ' &middot; ' + playerSeason + '</div>' +
-            (p.posicion ? '<div class="pp-chips"><span class="pp-chip">' + (posLabelFull[p.posicion] || p.posicion) + '</span></div>' : '') +
+            (p.posicion || p.lesionado ? '<div class="pp-chips">' +
+              (p.posicion ? '<span class="pp-chip">' + (posLabelFull[p.posicion] || p.posicion) + '</span>' : '') +
+              (p.lesionado ? '<span class="pp-chip pp-chip-injured">Lesionado</span>' : '') +
+            '</div>' : '') +
             '<div class="pp-hero-stats">' +
               hstat(p.rating != null ? Number(p.rating).toFixed(1) : '&ndash;', 'Rating', ' pp-rating') +
               hstat(g != null ? g : '&ndash;', 'Goles') +
@@ -158,7 +161,8 @@
           ['Tiros/partido', pv(tiPP, 2)], ['Tiros al arco/partido', pv(taPP, 2)], ['% titularidades', pv(titPct, 0, '%'), { bar: titPct }]
         ]) +
         ppSection(PPICO.info, 'Información general', [
-          ['Posición', nd(posLabelFull[p.posicion] || p.posicion)], ['Nacionalidad', nd(p.nacionalidad)], ['Edad', nd(p.edad)], ['F. nacimiento', nd(null)],
+          ['Posición', nd(posLabelFull[p.posicion] || p.posicion)], ['Nacionalidad', nd(p.nacionalidad)], ['Edad', nd(p.edad)],
+          ['F. nacimiento', nd(p.fecha_nacimiento ? new Date(p.fecha_nacimiento + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' }) : null)],
           ['Altura', p.altura ? p.altura + ' cm' : nd(null)], ['Peso', p.peso ? p.peso + ' kg' : nd(null)], ['Pie dominante', nd(null)], ['Dorsal', nd(p.dorsal)], ['Valor de mercado', nd(null)]
         ]) +
         ppSection(PPICO.ofe, 'Ofensivas', [

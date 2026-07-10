@@ -21,6 +21,7 @@
       border-radius: 99px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: #fff;
     }
     .pp-chip .lime { color: var(--accent); }
+    .pp-chip-injured { background: rgba(229,57,53,.15); border-color: rgba(229,57,53,.4); color: #ff7b72; }
     .pp-hero .season-nav { margin-left: auto; }
     .pp-hero .season-nav .sp-nav { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.16); color: #fff; }
     .pp-hero .season-nav .sp-nav:hover:not(:disabled) { background: rgba(255,255,255,.2); color: #fff; }

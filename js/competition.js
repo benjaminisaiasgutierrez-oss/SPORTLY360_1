@@ -47,14 +47,17 @@
         sb.from('goleadores').select('*')
           .eq('competicion_id', currentId).eq('temporada', currentSeason)
           .order('rank'),
-        sb.from('equipo_stats').select('porterias,amarillas,rojas')
+        sb.from('equipo_stats').select('*')
+          .eq('competicion_id', currentId).eq('temporada', currentSeason),
+        sb.from('asistencias').select('*')
           .eq('competicion_id', currentId).eq('temporada', currentSeason)
+          .order('rank')
       ]);
       currentGol = r[1].data || [];
       renderTabla(c, r[0].data || []);
       renderScorers(currentGol);
       renderCCStats(r[0].data || [], r[2].data || []);
-      renderAsistencias(currentGol);
+      renderAsistencias(r[3].data || []);
     }
 
     /* ── Estadísticas de la competición (solo datos reales; "Sin datos" si falta) ── */
@@ -124,26 +127,23 @@
     }
 
     /* ── Ranking de asistencias (datos reales de la tabla goleadores; nunca inventa) ── */
-    function renderAsistencias(gol) {
+    function renderAsistencias(list) {
       var cont = document.getElementById('assists');
-      var list = (gol || []).filter(function (p) { return p.asistencias != null && p.asistencias > 0; })
-        .sort(function (a, b) { return (b.asistencias - a.asistencias) || ((b.goles || 0) - (a.goles || 0)); });
-      if (!list.length) {
+      if (!list || !list.length) {
         cont.innerHTML = emptyState('asistencia', 'Sin datos de asistencias', 'No hay asistencias registradas para esta temporada.');
         return;
       }
       cont.innerHTML = '<div class="card">' + list.map(function (p, i) {
         var eq = (p.jugador || '').replace(/"/g, '&quot;');
         return '<div class="scorer clickable' + (i < 3 ? ' top' : '') + '" data-pl="' + eq + '" onclick="verJugador(this.dataset.pl, \'comp\')">' +
-          '<div class="rk">' + (i + 1) + '</div>' +
+          '<div class="rk">' + (p.rank || (i + 1)) + '</div>' +
           avatar(p.jugador, p.foto) +
           '<div class="info"><div class="nm">' + p.jugador + '</div>' +
           '<div class="tm"><img src="' + (p.team_logo || '') + '" alt="" onerror="this.style.display=\'none\'">' + p.equipo + '</div></div>' +
           '<div class="ast"><b>' + (p.goles || 0) + '</b>goles</div>' +
           '<div class="stat"><div class="goals">' + p.asistencias + '</div><div class="goals-l">asist.</div></div>' +
         '</div>';
-      }).join('') + '</div>' +
-      '<div class="tv-note" style="margin-top:14px">Asistencias registradas entre los m&aacute;ximos goleadores de la temporada (la API gratuita no publica el ranking completo de asistencias).</div>';
+      }).join('') + '</div>';
     }
 
     /* ── Colores reales de las competiciones europeas a las que se clasifica desde una liga ── */

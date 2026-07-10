@@ -126,13 +126,13 @@
 
       var avanzadas = ppSection(PPICO.ofe, 'Ofensivas', [
           ['Goles', pv(t.gf)], ['Promedio de goles', pv(promGF, 2)], ['Tiros', nd(es.tiros)], ['Tiros al arco', nd(es.tiros_arco)],
-          ['Conversión de tiros', conv != null ? pv(conv, 0, '%') : nd(null)], ['Asistencias', nd(null)], ['Grandes ocasiones', nd(null)]
+          ['Conversión de tiros', conv != null ? pv(conv, 0, '%') : nd(null)], ['Asistencias', nd(es.asistencias)], ['Grandes ocasiones', nd(null)]
         ]) +
         ppSection(PPICO.def, 'Defensivas', [
-          ['Goles recibidos', pv(t.ga)], ['Porterías imbatidas', pv(porterias)], ['Intercepciones', nd(null)], ['Recuperaciones', nd(null)],
-          ['Entradas', nd(null)], ['Duelos ganados', nd(null)], ['Amarillas', pvCard(es.amarillas, 'c-yellow')], ['Rojas', pvCard(es.rojas, 'c-red')]
+          ['Goles recibidos', pv(t.ga)], ['Porterías imbatidas', pv(porterias)], ['Intercepciones', nd(es.intercepciones)], ['Recuperaciones', nd(null)],
+          ['Entradas', nd(es.entradas)], ['Duelos ganados', nd(es.duelos_gan)], ['Amarillas', pvCard(es.amarillas, 'c-yellow')], ['Rojas', pvCard(es.rojas, 'c-red')]
         ]) +
-        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada y métricas derivadas. Tiros, córners y posesión de equipo quedan como "Sin datos" (no publicados por la API).</div>';
+        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada. Tiros/entradas/duelos son la suma real de todos los jugadores de la plantilla. Grandes ocasiones, recuperaciones y colores del club quedan como "Sin datos" (no publicados por la API).</div>';
 
       document.getElementById('team-view').innerHTML = hero +
         '<div class="cc-chips" id="team-chips" role="group" aria-label="Secciones del equipo">' +

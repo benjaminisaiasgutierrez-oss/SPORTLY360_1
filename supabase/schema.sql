@@ -193,7 +193,9 @@ create table if not exists public.plantilla (
   faltas_rec      int,
   amarillas       int,
   rojas           int,
-  rating          numeric
+  rating          numeric,
+  fecha_nacimiento date,
+  lesionado       boolean
 );
 create index if not exists idx_plantilla_comp_temp_equipo on public.plantilla(competicion_id, temporada, equipo);
 alter table public.plantilla enable row level security;
@@ -227,10 +229,32 @@ create table if not exists public.equipo_stats (
   porterias       int,
   amarillas       int,
   rojas           int,
-  tiros           int,
-  tiros_arco      int
+  tiros           int,   -- agregado real: suma de tiros de todos los jugadores de la plantilla
+  tiros_arco      int,   -- ídem, tiros al arco
+  entradas        int,   -- ídem, tackles
+  intercepciones  int,   -- ídem, intercepciones
+  duelos_gan      int,   -- ídem, duelos ganados
+  asistencias     int    -- ídem, asistencias
 );
 create index if not exists idx_equipo_stats_comp_temp on public.equipo_stats(competicion_id, temporada, equipo);
 alter table public.equipo_stats enable row level security;
 drop policy if exists "equipo_stats_select_all" on public.equipo_stats;
 create policy "equipo_stats_select_all" on public.equipo_stats for select using (true);
+
+-- Ranking completo de asistencias por competición (no solo entre los goleadores).
+create table if not exists public.asistencias (
+  id              bigint generated always as identity primary key,
+  competicion_id  text not null references public.competiciones(id) on delete cascade,
+  temporada       text not null,
+  rank            int,
+  jugador         text not null,
+  equipo          text,
+  team_logo       text,
+  foto            text,
+  asistencias     int,
+  goles           int
+);
+create index if not exists idx_asistencias_comp_temp on public.asistencias(competicion_id, temporada);
+alter table public.asistencias enable row level security;
+drop policy if exists "asistencias_select_all" on public.asistencias;
+create policy "asistencias_select_all" on public.asistencias for select using (true);
