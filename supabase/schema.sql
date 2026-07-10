@@ -195,7 +195,20 @@ create table if not exists public.plantilla (
   rojas           int,
   rating          numeric,
   fecha_nacimiento date,
-  lesionado       boolean
+  lesionado       boolean,
+  capitan         boolean,
+  sup_entro       int,   -- veces que entró de cambio
+  sup_salio       int,   -- veces que salió de cambio
+  sup_banca       int,   -- veces que quedó en banca sin jugar
+  regates_int     int,   -- regates intentados
+  regates_ok      int,   -- regates exitosos
+  duelos_total    int,   -- duelos disputados (duelos_gan ya existía)
+  pen_ganados     int,
+  pen_cometidos   int,
+  pen_anotados    int,
+  pen_fallados    int,
+  lugar_nacimiento text,
+  pais_nacimiento   text
 );
 create index if not exists idx_plantilla_comp_temp_equipo on public.plantilla(competicion_id, temporada, equipo);
 alter table public.plantilla enable row level security;

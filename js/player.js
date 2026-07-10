@@ -118,6 +118,9 @@
       var conv = (g != null && ti) ? Math.round(g / ti * 100) : null;
       var titPct = (tit != null && pj) ? Math.round(tit / pj * 100) : null;
       var arcoPct = (ta != null && ti) ? Math.round(ta / ti * 100) : null;
+      var regatesPct = (p.regates_ok != null && p.regates_int) ? Math.round(p.regates_ok / p.regates_int * 100) : null;
+      var duelosPct = (p.duelos_gan != null && p.duelos_total) ? Math.round(p.duelos_gan / p.duelos_total * 100) : null;
+      var lugarNac = [p.lugar_nacimiento, p.pais_nacimiento].filter(Boolean).join(', ');
 
       /* Radar: 5 categorías normalizadas contra topes fijos (dato real, documentado) */
       var pct = function (v, cap) { return v == null ? null : Math.max(0, Math.min(100, v / cap * 100)); };
@@ -139,8 +142,9 @@
             '<div class="pp-name">' + p.jugador + '</div>' +
             '<div class="pp-team">' + (p.team_logo ? '<img src="' + p.team_logo + '" onerror="this.style.display=\'none\'">' : '') +
               (p.equipo || '') + ' &middot; ' + currentComp.nombre + ' &middot; ' + playerSeason + '</div>' +
-            (p.posicion || p.lesionado ? '<div class="pp-chips">' +
+            (p.posicion || p.lesionado || p.capitan ? '<div class="pp-chips">' +
               (p.posicion ? '<span class="pp-chip">' + (posLabelFull[p.posicion] || p.posicion) + '</span>' : '') +
+              (p.capitan ? '<span class="pp-chip">&#9733; Capit&aacute;n</span>' : '') +
               (p.lesionado ? '<span class="pp-chip pp-chip-injured">Lesionado</span>' : '') +
             '</div>' : '') +
             '<div class="pp-hero-stats">' +
@@ -163,11 +167,14 @@
         ppSection(PPICO.info, 'Información general', [
           ['Posición', nd(posLabelFull[p.posicion] || p.posicion)], ['Nacionalidad', nd(p.nacionalidad)], ['Edad', nd(p.edad)],
           ['F. nacimiento', nd(p.fecha_nacimiento ? new Date(p.fecha_nacimiento + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' }) : null)],
+          ['Lugar de nacimiento', nd(lugarNac || null)],
           ['Altura', p.altura ? p.altura + ' cm' : nd(null)], ['Peso', p.peso ? p.peso + ' kg' : nd(null)], ['Pie dominante', nd(null)], ['Dorsal', nd(p.dorsal)], ['Valor de mercado', nd(null)]
         ]) +
         ppSection(PPICO.ofe, 'Ofensivas', [
           ['Goles', pv(g)], ['Asistencias', pv(a)], ['xG', nd(null)], ['xA', nd(null)],
-          ['Tiros', pv(ti)], ['Tiros al arco', pv(ta), { bar: arcoPct, desc: arcoPct != null ? arcoPct + '% de los tiros' : '' }], ['Grandes ocasiones', nd(null)]
+          ['Tiros', pv(ti)], ['Tiros al arco', pv(ta), { bar: arcoPct, desc: arcoPct != null ? arcoPct + '% de los tiros' : '' }],
+          ['Regates exitosos', pv(p.regates_ok)], ['Regates intentados', pv(p.regates_int), { bar: regatesPct, desc: regatesPct != null ? regatesPct + '% de efectividad' : '' }],
+          ['Grandes ocasiones', nd(null)]
         ]) +
         ppSection(PPICO.cre, 'Creación', [
           ['Pases completados', pv(p.pases)], ['Precisión de pase', pv(prec, 0, '%'), { bar: prec }], ['Centros', nd(null)],
@@ -175,16 +182,20 @@
         ]) +
         ppSection(PPICO.def, 'Defensivas', [
           ['Entradas', pv(p.tackles)], ['Intercepciones', pv(p.intercepciones)], ['Recuperaciones', nd(null)],
-          ['Duelos ganados', pv(p.duelos_gan)], ['Balones recuperados', nd(null)]
+          ['Duelos ganados', pv(p.duelos_gan)], ['Duelos totales', pv(p.duelos_total), { bar: duelosPct, desc: duelosPct != null ? duelosPct + '% ganados' : '' }],
+          ['Balones recuperados', nd(null)]
         ]) +
         ppSection(PPICO.dis, 'Disciplina', [
           ['Amarillas', pvCard(p.amarillas, 'c-yellow')], ['Rojas', pvCard(p.rojas, 'c-red')],
-          ['Faltas cometidas', pv(p.faltas_com)], ['Faltas recibidas', pv(p.faltas_rec)]
+          ['Faltas cometidas', pv(p.faltas_com)], ['Faltas recibidas', pv(p.faltas_rec)],
+          ['Penales anotados', pv(p.pen_anotados)], ['Penales fallados', pv(p.pen_fallados)],
+          ['Penales ganados', pv(p.pen_ganados)], ['Penales cometidos', pv(p.pen_cometidos)]
         ]) +
         ppSection(PPICO.part, 'Participación', [
-          ['Partidos', pv(pj)], ['Titularidades', pv(tit), { bar: titPct }], ['Suplencias', pv(sup)], ['Minutos', pv(min)]
+          ['Partidos', pv(pj)], ['Titularidades', pv(tit), { bar: titPct }], ['Suplencias', pv(sup)], ['Minutos', pv(min)],
+          ['Entró de cambio', pv(p.sup_entro)], ['Salió de cambio', pv(p.sup_salio)], ['En banca sin jugar', pv(p.sup_banca)]
         ]) +
-        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada (API-Football) y métricas derivadas calculadas. Los campos "Sin datos" (perfil personal, xG/xA, centros…) quedan listos para futuras integraciones.</div>';
+        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada (API-Football) y métricas derivadas calculadas. xG/xA, grandes ocasiones, centros, pie dominante y valor de mercado quedan como "Sin datos" porque esta API no los publica.</div>';
 
       animarBarras();
       animarContadores();
