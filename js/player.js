@@ -56,7 +56,7 @@
       return '<div class="pp-card" style="animation-delay:' + d + 'ms">' + ico + '<div class="pp-v">' + value + '</div><div class="pp-k">' + label + '</div>' + desc + bar + '</div>';
     }
     function ppSection(ico, title, specs) {  // specs: [ [label, value, opts?], ... ]
-      var cards = specs.map(function (s) { var o = s[2] || {}; o.ico = ico; return ppStat(s[0], s[1], o); }).join('');
+      var cards = specs.map(function (s) { return ppStat(s[0], s[1], s[2] || {}); }).join('');
       return '<div class="pp-title"><span class="pp-tico">' + ico + '</span>' + title + '</div><div class="pp-grid">' + cards + '</div>';
     }
 
@@ -151,7 +151,7 @@
 
       document.getElementById('player-view').innerHTML = hero +
         radarSvg(cats) +
-        ppSection(PPICO.rend, 'Rendimiento (calculado)', [
+        ppSection(PPICO.rend, 'Rendimiento', [
           ['Goles/partido', pv(golPP, 2)], ['Goles/90 min', pv(gol90, 2)], ['Asist./partido', pv(asisPP, 2)], ['Min./gol', pv(minGol)],
           ['Participación G+A', pv(ga)], ['Conversión de tiros', pv(conv, 0, '%'), { bar: conv, desc: 'goles / tiros' }],
           ['Tiros/partido', pv(tiPP, 2)], ['Tiros al arco/partido', pv(taPP, 2)], ['% titularidades', pv(titPct, 0, '%'), { bar: titPct }]

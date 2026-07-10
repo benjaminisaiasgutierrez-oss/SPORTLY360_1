@@ -106,7 +106,7 @@
       document.getElementById('team-view').innerHTML = hero +
         radarSvg(cats) +
         '<div class="pp-title"><span class="pp-tico">' + TI.forma + '</span>Forma reciente</div>' + forma +
-        ppSection(PPICO.rend, 'Rendimiento (calculado)', [
+        ppSection(PPICO.rend, 'Rendimiento', [
           ['Puntos/partido', pv(ppp, 2)], ['Goles/partido', pv(promGF, 2)], ['Recibidos/partido', pv(promGA, 2)], ['Dif. gol promedio', pv(dgProm, 2)],
           ['% victorias', pv(winPct, 0, '%'), { bar: winPct }], ['% derrotas', pv(losePct, 0, '%'), { bar: losePct }],
           ['% porterías imbatidas', pv(csPct, 0, '%'), { bar: csPct }], ['Tarjetas/partido', pv(cardsPP, 2)]
