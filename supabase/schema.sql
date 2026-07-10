@@ -111,7 +111,8 @@ create table if not exists public.competiciones (
   logo    text,
   tipo    text not null check (tipo in ('league','cup')),
   pais    text,
-  orden   int not null default 0
+  orden   int not null default 0,
+  color   text   -- color de marca, usado en el indicador activo del sidebar
 );
 alter table public.competiciones enable row level security;
 drop policy if exists "competiciones_select_all" on public.competiciones;

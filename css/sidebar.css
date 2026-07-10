@@ -62,7 +62,7 @@
     }
     .nav-item.active::before {
       content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-      width: 3px; height: 58%; border-radius: 99px; background: var(--accent);
+      width: 3px; height: 58%; border-radius: 99px; background: var(--comp-color, var(--accent));
     }
     .nav-item.active .ni-ico { color: var(--accent); }
 

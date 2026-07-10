@@ -50,6 +50,7 @@
         var item = '<div class="nav-item' + (activo ? ' active' : '') + '" role="button" tabindex="0"' +
           ' onclick="selectComp(\'' + c.id + '\')" onkeydown="navKey(event)"' +
           (activo ? ' aria-current="page"' : '') + (sbMini ? ' title="' + c.nombre + '"' : '') +
+          (c.color ? ' style="--comp-color:' + c.color + '"' : '') +
           ' aria-label="' + c.nombre + '">' +
           '<img src="' + c.logo + '" alt=""><span class="ni-txt">' + c.nombre + '</span></div>';
         if (c.tipo === 'cup') copas += item; else ligas += item;
@@ -94,7 +95,7 @@
       renderSidebar();
       var seasons = Object.keys(seasonsMap[id] || {}).sort().reverse();
       currentSeason = (seasonSel[id] && seasons.indexOf(seasonSel[id]) >= 0) ? seasonSel[id] : (seasons[0] || null);   /* conserva la temporada elegida */
-      if (nueva) tab = 'stats';   /* v2.1: al entrar a otra competición se abre el Competition Center (resumen) */
+      if (nueva) tab = 'tabla';   /* v2.2: al entrar a otra competición se abre la Tabla de posiciones */
       loadData();
     }
 
