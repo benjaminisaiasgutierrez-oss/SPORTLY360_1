@@ -197,3 +197,38 @@ create index if not exists idx_plantilla_comp_temp_equipo on public.plantilla(co
 alter table public.plantilla enable row level security;
 drop policy if exists "plantilla_select_all" on public.plantilla;
 create policy "plantilla_select_all" on public.plantilla for select using (true);
+
+-- Info institucional del equipo (no varía por competición/temporada).
+create table if not exists public.equipos_info (
+  id              bigint generated always as identity primary key,
+  equipo          text not null unique,
+  team_api_id     int,
+  codigo          text,
+  pais            text,
+  fundacion       int,
+  estadio         text,
+  ciudad          text,
+  capacidad       int,
+  entrenador      text,
+  entrenador_foto text
+);
+alter table public.equipos_info enable row level security;
+drop policy if exists "equipos_info_select_all" on public.equipos_info;
+create policy "equipos_info_select_all" on public.equipos_info for select using (true);
+
+-- Estadísticas de equipo por competición/temporada (porterías, tarjetas).
+create table if not exists public.equipo_stats (
+  id              bigint generated always as identity primary key,
+  competicion_id  text not null references public.competiciones(id) on delete cascade,
+  temporada       text not null,
+  equipo          text not null,
+  porterias       int,
+  amarillas       int,
+  rojas           int,
+  tiros           int,
+  tiros_arco      int
+);
+create index if not exists idx_equipo_stats_comp_temp on public.equipo_stats(competicion_id, temporada, equipo);
+alter table public.equipo_stats enable row level security;
+drop policy if exists "equipo_stats_select_all" on public.equipo_stats;
+create policy "equipo_stats_select_all" on public.equipo_stats for select using (true);
