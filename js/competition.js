@@ -17,7 +17,7 @@
           star('competicion', c.id, c.nombre, { logo: c.logo, cid: c.id }) +
           '<div class="season-nav">' + seasonNavInner(currentSeason, 'cambiarTemporada') + '</div>' +
         '</div>';
-      var chips = [['stats', 'stats', 'Estad&iacute;sticas'], ['tabla', 'trofeo', 'Tabla'], ['gol', 'gol', 'Goleadores'], ['asis', 'asistencia', 'Asistencias']];
+      var chips = [['tabla', 'trofeo', 'Tabla'], ['stats', 'stats', 'Estad&iacute;sticas'], ['gol', 'gol', 'Goleadores'], ['asis', 'asistencia', 'Asistencias']];
       document.getElementById('cc-chips').innerHTML = chips.map(function (ch) {
         return '<button class="cc-chip" id="chip-' + ch[0] + '" onclick="setTab(\'' + ch[0] + '\')" aria-pressed="false">' +
           '<span class="cc-ci">' + ico(ch[1], 16) + '</span>' + ch[2] + '</button>';

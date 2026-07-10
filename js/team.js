@@ -112,12 +112,19 @@
 
       var resumen = radarSvg(cats) +
         '<div class="pp-title"><span class="pp-tico">' + TI.forma + '</span>Forma reciente</div>' + forma +
-        ppSection(PPICO.rend, 'Rendimiento', [
+        ppSection(TI.info, 'Información general', [
+          ['Nombre', t.equipo], ['Nombre corto', nd(ei.codigo)], ['País', nd(ei.pais || pais)], ['Fundación', nd(ei.fundacion)],
+          ['Estadio', nd(ei.estadio)], ['Capacidad', ei.capacidad != null ? Number(ei.capacidad).toLocaleString('es-CL') : nd(null)],
+          ['Ciudad', nd(ei.ciudad)], ['Entrenador', nd(ei.entrenador)], ['Colores', nd(null)]
+        ]);
+
+      var estadisticas = ppSection(PPICO.rend, 'Rendimiento', [
           ['Puntos/partido', pv(ppp, 2)], ['Goles/partido', pv(promGF, 2)], ['Recibidos/partido', pv(promGA, 2)], ['Dif. gol promedio', pv(dgProm, 2)],
           ['% victorias', pv(winPct, 0, '%'), { bar: winPct }], ['% derrotas', pv(losePct, 0, '%'), { bar: losePct }],
           ['% porterías imbatidas', pv(csPct, 0, '%'), { bar: csPct }], ['Tarjetas/partido', pv(cardsPP, 2)]
-        ]) +
-        ppSection(PPICO.ofe, 'Ofensivas', [
+        ]);
+
+      var avanzadas = ppSection(PPICO.ofe, 'Ofensivas', [
           ['Goles', pv(t.gf)], ['Promedio de goles', pv(promGF, 2)], ['Tiros', nd(es.tiros)], ['Tiros al arco', nd(es.tiros_arco)],
           ['Conversión de tiros', conv != null ? pv(conv, 0, '%') : nd(null)], ['Asistencias', nd(null)], ['Grandes ocasiones', nd(null)]
         ]) +
@@ -125,27 +132,26 @@
           ['Goles recibidos', pv(t.ga)], ['Porterías imbatidas', pv(porterias)], ['Intercepciones', nd(null)], ['Recuperaciones', nd(null)],
           ['Entradas', nd(null)], ['Duelos ganados', nd(null)], ['Amarillas', pvCard(es.amarillas, 'c-yellow')], ['Rojas', pvCard(es.rojas, 'c-red')]
         ]) +
-        ppSection(TI.info, 'Información general', [
-          ['Nombre', t.equipo], ['Nombre corto', nd(ei.codigo)], ['País', nd(ei.pais || pais)], ['Fundación', nd(ei.fundacion)],
-          ['Estadio', nd(ei.estadio)], ['Capacidad', ei.capacidad != null ? Number(ei.capacidad).toLocaleString('es-CL') : nd(null)],
-          ['Ciudad', nd(ei.ciudad)], ['Entrenador', nd(ei.entrenador)], ['Colores', nd(null)]
-        ]) +
         '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada y métricas derivadas. Tiros, córners y posesión de equipo quedan como "Sin datos" (no publicados por la API).</div>';
 
       document.getElementById('team-view').innerHTML = hero +
         '<div class="cc-chips" id="team-chips" role="group" aria-label="Secciones del equipo">' +
           '<button class="cc-chip active" id="tchip-resumen" onclick="setTeamTab(\'resumen\')" aria-pressed="true">Resumen</button>' +
           '<button class="cc-chip" id="tchip-jugadores" onclick="setTeamTab(\'jugadores\')" aria-pressed="false">Jugadores (' + teamPlayers.length + ')</button>' +
+          '<button class="cc-chip" id="tchip-estadisticas" onclick="setTeamTab(\'estadisticas\')" aria-pressed="false">Estadísticas</button>' +
+          '<button class="cc-chip" id="tchip-avanzadas" onclick="setTeamTab(\'avanzadas\')" aria-pressed="false">Avanzadas</button>' +
         '</div>' +
         '<div id="team-view-resumen">' + resumen + '</div>' +
-        '<div id="team-view-jugadores" class="hidden">' + jugadores + '</div>';
+        '<div id="team-view-jugadores" class="hidden">' + jugadores + '</div>' +
+        '<div id="team-view-estadisticas" class="hidden">' + estadisticas + '</div>' +
+        '<div id="team-view-avanzadas" class="hidden">' + avanzadas + '</div>';
 
       animarBarras();
       animarContadores();
     }
 
     function setTeamTab(t) {
-      ['resumen', 'jugadores'].forEach(function (k) {
+      ['resumen', 'jugadores', 'estadisticas', 'avanzadas'].forEach(function (k) {
         var chip = document.getElementById('tchip-' + k);
         if (chip) { chip.classList.toggle('active', k === t); chip.setAttribute('aria-pressed', String(k === t)); }
         var view = document.getElementById('team-view-' + k);
