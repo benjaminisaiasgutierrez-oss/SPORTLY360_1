@@ -158,3 +158,42 @@ create index if not exists idx_goleadores_comp_temp on public.goleadores(competi
 alter table public.goleadores enable row level security;
 drop policy if exists "goleadores_select_all" on public.goleadores;
 create policy "goleadores_select_all" on public.goleadores for select using (true);
+
+-- Plantel completo por equipo (no solo los máximos goleadores).
+create table if not exists public.plantilla (
+  id              bigint generated always as identity primary key,
+  competicion_id  text not null references public.competiciones(id) on delete cascade,
+  temporada       text not null,
+  equipo          text not null,
+  team_logo       text,
+  jugador         text not null,
+  foto            text,
+  posicion        text,
+  dorsal          int,
+  nacionalidad    text,
+  edad            int,
+  altura          text,
+  peso            text,
+  partidos        int,
+  titular         int,
+  minutos         int,
+  goles           int,
+  asistencias     int,
+  tiros           int,
+  tiros_arco      int,
+  pases           int,
+  precision_pase  int,
+  pases_clave     int,
+  tackles         int,
+  intercepciones  int,
+  duelos_gan      int,
+  faltas_com      int,
+  faltas_rec      int,
+  amarillas       int,
+  rojas           int,
+  rating          numeric
+);
+create index if not exists idx_plantilla_comp_temp_equipo on public.plantilla(competicion_id, temporada, equipo);
+alter table public.plantilla enable row level security;
+drop policy if exists "plantilla_select_all" on public.plantilla;
+create policy "plantilla_select_all" on public.plantilla for select using (true);
