@@ -31,7 +31,7 @@
       var u = res.data && res.data.user;
       if (u) {
         var m = u.user_metadata || {};
-        var full = [m.nombre, m.apellido].filter(Boolean).join(' ');
+        var full = [m.nombre, m.apellido].filter(Boolean).join(' ') || m.full_name || m.name;
         userNombre = nombre || full || u.email.split('@')[0];
         userEmail = u.email || '';
         pintarUsuario();

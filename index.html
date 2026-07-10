@@ -164,7 +164,7 @@
 
     function irAInicio(user) {
       var m = (user && user.user_metadata) || {};
-      var nombre = [m.nombre, m.apellido].filter(Boolean).join(' ') || (user ? user.email : '');
+      var nombre = [m.nombre, m.apellido].filter(Boolean).join(' ') || m.full_name || m.name || (user ? user.email : '');
       window.location.href = 'inicio.html?nombre=' + encodeURIComponent(nombre);
     }
 
