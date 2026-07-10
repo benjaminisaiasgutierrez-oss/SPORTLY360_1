@@ -129,16 +129,6 @@
         'Participación': (pct(min, 3400) == null) ? null : Math.round(pct(min, 3400))
       };
 
-      /* Insignias automáticas (condiciones objetivas) */
-      var bd = [];
-      if (p.rank === 1) bd.push('🏆 Máximo goleador');
-      else if (p.rank != null && p.rank <= 3) bd.push('🏆 Top-3 goleador');
-      if (a != null && a >= 10) bd.push('🎯 Gran asistente');
-      if (tit != null && pj >= 10 && tit / pj >= 0.8) bd.push('⚡ Titular habitual');
-      if (p.amarillas != null && p.amarillas <= 2 && (p.rojas || 0) === 0 && pj >= 10) bd.push('🛡️ Muy disciplinado');
-      if (ga != null && ga >= 20) bd.push('🔥 Gran participación ofensiva');
-      var badges = bd.length ? '<div class="pp-badges">' + bd.map(function (b) { return '<span class="pp-badge">' + b + '</span>'; }).join('') + '</div>' : '';
-
       /* Hero: foto + nombre + equipo/liga/temporada + rating destacado + G/A */
       var hstat = function (v, k, cls) { return '<div class="pp-hstat' + (cls || '') + '"><div class="v">' + v + '</div><div class="k">' + k + '</div></div>'; };
       var hero =
@@ -157,7 +147,7 @@
           '</div>' +
           star('jugador', currentId + '|' + playerSeason + '|' + p.jugador, p.jugador, { foto: p.foto, comp: currentComp.nombre, cid: currentId, temp: playerSeason }) +
           '<div class="season-nav">' + seasonNavInner(playerSeason, 'cambiarTempJugador') + '</div>' +
-        '</div>' + badges;
+        '</div>';
 
       document.getElementById('player-view').innerHTML = hero +
         radarSvg(cats) +

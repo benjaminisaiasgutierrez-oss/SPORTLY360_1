@@ -59,16 +59,6 @@
         'Solidez': csPct == null ? null : Math.round(Math.min(100, csPct * 1.6))
       };
 
-      /* Insignias automáticas (condiciones objetivas y computables) */
-      var bd = [];
-      if (t.rank === 1) bd.push('🏆 Líder del campeonato');
-      else if (t.rank != null && t.rank <= 3) bd.push('🥇 Zona de podio');
-      if (promGF != null && promGF >= 2.0) bd.push('🔥 Ataque potente');
-      if (promGA != null && promGA <= 0.9) bd.push('🛡️ Defensa sólida');
-      if (ppp != null && ppp >= 2.0) bd.push('⚡ Gran rendimiento');
-      if (pj >= 10 && t.win / pj >= 0.6) bd.push('🎯 Equipo consistente');
-      var badges = bd.length ? '<div class="pp-badges">' + bd.map(function (b) { return '<span class="pp-badge">' + b + '</span>'; }).join('') + '</div>' : '';
-
       /* Íconos (reutiliza ppSvg; PPICO se reutiliza para las secciones comunes) */
       var TI = {
         info: ppSvg('<path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/>'),
@@ -94,7 +84,7 @@
           '</div>' +
           star('equipo', currentId + '|' + teamSeason + '|' + t.equipo, t.equipo, { logo: t.logo, comp: currentComp.nombre, cid: currentId, temp: teamSeason }) +
           '<div class="season-nav">' + seasonNavInner(teamSeason, 'cambiarTempEquipo') + '</div>' +
-        '</div>' + badges;
+        '</div>';
 
       /* Forma reciente (real si existe; si no, estructura lista) */
       var forma = t.form
