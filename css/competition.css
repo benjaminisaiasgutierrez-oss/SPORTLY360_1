@@ -64,8 +64,8 @@
     td.pos.z-champ::before, td.pos.z-eur::before, td.pos.z-low::before, td.pos.z-rel::before {
       content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 2px;
     }
-    td.pos.z-champ::before { background: var(--accent); }
-    td.pos.z-eur::before   { background: #2979ff; }
+    td.pos.z-champ::before { background: var(--zone-champ-color, var(--accent)); }
+    td.pos.z-eur::before   { background: var(--zone-eur-color, #2979ff); }
     td.pos.z-low::before   { background: rgba(255,255,255,.25); }
     td.pos.z-rel::before   { background: #e53935; }
 

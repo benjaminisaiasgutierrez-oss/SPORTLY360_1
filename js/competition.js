@@ -146,6 +146,13 @@
       '<div class="tv-note" style="margin-top:14px">Asistencias registradas entre los m&aacute;ximos goleadores de la temporada (la API gratuita no publica el ranking completo de asistencias).</div>';
     }
 
+    /* ── Colores reales de las competiciones europeas a las que se clasifica desde una liga ── */
+    function zoneColors() {
+      var champ = comps.find(function (c) { return c.id === '2'; });     /* Champions League */
+      var eur = comps.find(function (c) { return c.id === '3'; });       /* Europa League */
+      return { champ: (champ && champ.color) || 'var(--accent)', eur: (eur && eur.color) || '#2979ff' };
+    }
+
     /* ── Zona de clasificación ── */
     function zoneClass(comp, rank, total, grouped) {
       if (grouped) {                     /* fase de grupos (4 equipos) */
@@ -177,9 +184,10 @@
           '<span><i style="background:#2979ff"></i> Playoff (9-24)</span>' +
           '<span><i style="background:#e53935"></i> Eliminado (25-36)</span>';
       } else {
+        var zc = zoneColors();
         el.innerHTML =
-          '<span><i style="background:var(--accent)"></i> Champions (1-4)</span>' +
-          '<span><i style="background:#2979ff"></i> Europa (5-6)</span>' +
+          '<span><i style="background:' + zc.champ + '"></i> Champions (1-4)</span>' +
+          '<span><i style="background:' + zc.eur + '"></i> Europa (5-6)</span>' +
           '<span><i style="background:#e53935"></i> Descenso</span>';
       }
     }
@@ -217,7 +225,10 @@
     }
 
     function tablaCard(comp, rows, total, grouped) {
-      var head = '<div class="card"><table><thead><tr>' +
+      var zc = zoneColors();
+      var style = (comp.tipo === 'league' && !grouped)
+        ? ' style="--zone-champ-color:' + zc.champ + ';--zone-eur-color:' + zc.eur + '"' : '';
+      var head = '<div class="card"' + style + '><table><thead><tr>' +
         '<th>#</th><th class="team-col">Equipo</th><th>PJ</th>' +
         '<th class="hide-m">G</th><th class="hide-m">E</th><th class="hide-m">P</th>' +
         '<th class="hide-m">GF</th><th class="hide-m">GC</th><th>DG</th><th>Pts</th>' +
