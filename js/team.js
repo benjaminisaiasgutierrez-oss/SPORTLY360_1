@@ -15,15 +15,16 @@
       document.getElementById('team-view').innerHTML = skelPerfil();
       var r = await Promise.all([
         sb.from('posiciones').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1),
-        sb.from('goleadores').select('*').eq('competicion_id', currentId).eq('temporada', season),
+        sb.from('plantilla').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name),
         sb.from('equipo_stats').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1)
       ]);
       teamRow = (r[0].data || [])[0] || null;
       teamStats = (r[2].data || [])[0] || null;
-      var n = normTeam(name);
-      teamPlayers = (r[1].data || []).filter(function(g) {
-        var gn = normTeam(g.equipo); return gn && (gn.indexOf(n) >= 0 || n.indexOf(gn) >= 0);
-      }).sort(function(a, b) { return b.goles - a.goles; });
+      var posOrden = { Goalkeeper: 0, Defender: 1, Midfielder: 2, Attacker: 3 };
+      teamPlayers = (r[1].data || []).sort(function(a, b) {
+        var pa = posOrden[a.posicion], pb = posOrden[b.posicion];
+        return ((pa == null ? 9 : pa) - (pb == null ? 9 : pb)) || (b.minutos || 0) - (a.minutos || 0);
+      });
       renderTeam();
     }
 
@@ -91,20 +92,22 @@
         ? '<div class="tv-form" style="margin:2px 2px 0">' + formHtml(t.form) + '</div>'
         : '<div class="pp-desc" style="font-size:13px;margin:2px">Forma reciente no disponible</div>';
 
-      /* Jugadores del equipo (tabla clickable, se conserva la funcionalidad) */
+      /* Jugadores del equipo: plantilla completa (tabla clickable, se conserva la funcionalidad) */
+      var posLabel = { Goalkeeper: 'POR', Defender: 'DEF', Midfielder: 'MED', Attacker: 'DEL' };
       var rows = teamPlayers.length ? teamPlayers.map(function (p, i) {
         var eq = (p.jugador || '').replace(/"/g, '&quot;');
         return '<tr class="team-row" data-pl="' + eq + '" onclick="verJugador(this.dataset.pl, \'team\')">' +
           '<td class="pos">' + (i + 1) + '</td>' +
           '<td><div class="team-cell">' + avatar(p.jugador, p.foto) + '<span>' + p.jugador + '</span></div></td>' +
-          '<td class="pts">' + p.goles + '</td><td>' + (p.asistencias || 0) + '</td>' +
+          '<td class="dim">' + (posLabel[p.posicion] || p.posicion || '&ndash;') + '</td>' +
+          '<td class="dim">' + (p.partidos || 0) + '</td>' +
+          '<td class="pts">' + (p.goles || 0) + '</td><td>' + (p.asistencias || 0) + '</td>' +
           '<td class="c-yellow">' + (p.amarillas != null ? p.amarillas : 0) + '</td><td class="c-red">' + (p.rojas != null ? p.rojas : 0) + '</td></tr>';
-      }).join('') : '<tr><td colspan="6" class="loading">Sin datos de jugadores para esta temporada.</td></tr>';
-      var jugadores = '<div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Jugadores</div>' +
-        '<div class="card"><table><thead><tr><th>#</th><th class="team-col">Jugador</th><th>Goles</th><th>Asist.</th><th><span class="cd cd-y"></span></th><th><span class="cd cd-r"></span></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+      }).join('') : '<tr><td colspan="8" class="loading">Sin datos de jugadores para esta temporada.</td></tr>';
+      var jugadores = '<div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Jugadores (' + teamPlayers.length + ')</div>' +
+        '<div class="card"><table><thead><tr><th>#</th><th class="team-col">Jugador</th><th>Pos</th><th>PJ</th><th>Goles</th><th>Asist.</th><th><span class="cd cd-y"></span></th><th><span class="cd cd-r"></span></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 
-      document.getElementById('team-view').innerHTML = hero +
-        radarSvg(cats) +
+      var resumen = radarSvg(cats) +
         '<div class="pp-title"><span class="pp-tico">' + TI.forma + '</span>Forma reciente</div>' + forma +
         ppSection(PPICO.rend, 'Rendimiento', [
           ['Puntos/partido', pv(ppp, 2)], ['Goles/partido', pv(promGF, 2)], ['Recibidos/partido', pv(promGA, 2)], ['Dif. gol promedio', pv(dgProm, 2)],
@@ -123,10 +126,26 @@
           ['Nombre', t.equipo], ['Nombre corto', nd(null)], ['País', nd(pais)], ['Fundación', nd(null)],
           ['Estadio', nd(null)], ['Capacidad', nd(null)], ['Ciudad', nd(null)], ['Entrenador', nd(null)], ['Colores', nd(null)]
         ]) +
-        jugadores +
         '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada y métricas derivadas. La info institucional (estadio, fundación, entrenador…) y tiros/córners/posesión quedan como "Sin datos", listos para futuras integraciones (endpoint <code>/teams</code>).</div>';
+
+      document.getElementById('team-view').innerHTML = hero +
+        '<div class="cc-chips" id="team-chips" role="group" aria-label="Secciones del equipo">' +
+          '<button class="cc-chip active" id="tchip-resumen" onclick="setTeamTab(\'resumen\')" aria-pressed="true">Resumen</button>' +
+          '<button class="cc-chip" id="tchip-jugadores" onclick="setTeamTab(\'jugadores\')" aria-pressed="false">Jugadores (' + teamPlayers.length + ')</button>' +
+        '</div>' +
+        '<div id="team-view-resumen">' + resumen + '</div>' +
+        '<div id="team-view-jugadores" class="hidden">' + jugadores + '</div>';
 
       animarBarras();
       animarContadores();
+    }
+
+    function setTeamTab(t) {
+      ['resumen', 'jugadores'].forEach(function (k) {
+        var chip = document.getElementById('tchip-' + k);
+        if (chip) { chip.classList.toggle('active', k === t); chip.setAttribute('aria-pressed', String(k === t)); }
+        var view = document.getElementById('team-view-' + k);
+        if (view) view.classList.toggle('hidden', k !== t);
+      });
     }
 
