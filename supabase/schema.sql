@@ -134,7 +134,8 @@ create table if not exists public.posiciones (
   ga              int,
   gd              int,
   points          int,
-  form            text
+  form            text,
+  descripcion     text   -- texto real de la API (zona de clasificación: Champions/Europa/Conference/Descenso, incluye casos de cupo por copa)
 );
 create index if not exists idx_posiciones_comp_temp on public.posiciones(competicion_id, temporada);
 alter table public.posiciones enable row level security;

@@ -61,11 +61,12 @@
     .pts { font-weight: 800; color: var(--accent); }
     .dim { color: var(--txt-dim); }
 
-    td.pos.z-champ::before, td.pos.z-eur::before, td.pos.z-low::before, td.pos.z-rel::before {
+    td.pos.z-champ::before, td.pos.z-eur::before, td.pos.z-conf::before, td.pos.z-low::before, td.pos.z-rel::before {
       content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 2px;
     }
     td.pos.z-champ::before { background: var(--zone-champ-color, var(--accent)); }
     td.pos.z-eur::before   { background: var(--zone-eur-color, #2979ff); }
+    td.pos.z-conf::before  { background: var(--zone-conf-color, #00a650); }
     td.pos.z-low::before   { background: rgba(255,255,255,.25); }
     td.pos.z-rel::before   { background: #e53935; }
 

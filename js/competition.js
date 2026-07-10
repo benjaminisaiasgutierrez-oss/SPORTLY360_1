@@ -150,24 +150,34 @@
     function zoneColors() {
       var champ = comps.find(function (c) { return c.id === '2'; });     /* Champions League */
       var eur = comps.find(function (c) { return c.id === '3'; });       /* Europa League */
-      return { champ: (champ && champ.color) || 'var(--accent)', eur: (eur && eur.color) || '#2979ff' };
+      var conf = comps.find(function (c) { return c.id === '848'; });    /* Conference League */
+      return {
+        champ: (champ && champ.color) || 'var(--accent)',
+        eur: (eur && eur.color) || '#2979ff',
+        conf: (conf && conf.color) || '#00a650'
+      };
     }
 
-    /* ── Zona de clasificación ── */
-    function zoneClass(comp, rank, total, grouped) {
+    /* ── Zona de clasificación ──
+       En ligas: usa la "description" real que entrega la API (incluye casos especiales,
+       como el cupo de Europa League por ganar la copa doméstica). En copas UEFA, usa
+       la posición dentro del formato de liga única (no hay "descripción" equivalente). */
+    function zoneClass(comp, t, total, grouped) {
       if (grouped) {                     /* fase de grupos (4 equipos) */
-        if (rank <= 2) return 'z-champ';
-        if (rank === 3) return 'z-eur';
+        if (t.rank <= 2) return 'z-champ';
+        if (t.rank === 3) return 'z-eur';
         return 'z-rel';
       }
       if (comp.tipo === 'cup') {          /* fase liga (36 equipos) */
-        if (rank <= 8) return 'z-champ';
-        if (rank <= 24) return 'z-eur';
+        if (t.rank <= 8) return 'z-champ';
+        if (t.rank <= 24) return 'z-eur';
         return 'z-rel';
       }
-      if (rank <= 4) return 'z-champ';    /* liga */
-      if (rank <= 6) return 'z-eur';
-      if (rank > total - 3) return 'z-rel';
+      var d = t.descripcion || '';
+      if (/Champions League/i.test(d)) return 'z-champ';
+      if (/Europa League/i.test(d)) return 'z-eur';
+      if (/Conference League/i.test(d)) return 'z-conf';
+      if (/Relegation/i.test(d)) return 'z-rel';
       return '';
     }
 
@@ -186,8 +196,9 @@
       } else {
         var zc = zoneColors();
         el.innerHTML =
-          '<span><i style="background:' + zc.champ + '"></i> Champions (1-4)</span>' +
-          '<span><i style="background:' + zc.eur + '"></i> Europa (5-6)</span>' +
+          '<span><i style="background:' + zc.champ + '"></i> Champions League</span>' +
+          '<span><i style="background:' + zc.eur + '"></i> Europa League</span>' +
+          '<span><i style="background:' + zc.conf + '"></i> Conference League</span>' +
           '<span><i style="background:#e53935"></i> Descenso</span>';
       }
     }
@@ -210,7 +221,7 @@
     }
 
     function filaHtml(comp, t, total, grouped) {
-      var z = zoneClass(comp, t.rank, total, grouped);
+      var z = zoneClass(comp, t, total, grouped);
       var eq = (t.equipo || '').replace(/"/g, '&quot;');
       return '<tr class="team-row" data-eq="' + eq + '" onclick="verEquipo(this.dataset.eq)">' +
         '<td class="pos ' + z + '">' + t.rank + '</td>' +
@@ -227,7 +238,7 @@
     function tablaCard(comp, rows, total, grouped) {
       var zc = zoneColors();
       var style = (comp.tipo === 'league' && !grouped)
-        ? ' style="--zone-champ-color:' + zc.champ + ';--zone-eur-color:' + zc.eur + '"' : '';
+        ? ' style="--zone-champ-color:' + zc.champ + ';--zone-eur-color:' + zc.eur + ';--zone-conf-color:' + zc.conf + '"' : '';
       var head = '<div class="card"' + style + '><table><thead><tr>' +
         '<th>#</th><th class="team-col">Equipo</th><th>PJ</th>' +
         '<th class="hide-m">G</th><th class="hide-m">E</th><th class="hide-m">P</th>' +
