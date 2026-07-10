@@ -162,6 +162,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
     /* ── Cliente Supabase (la anon key es pública por diseño) ── */
     const SB_URL  = 'https://scixksgcbqumhygvdmal.supabase.co';
@@ -192,16 +193,57 @@
     }
     function clearErr(id) { document.getElementById(id).classList.remove('show'); }
 
-    /* ── Login con Google (Supabase OAuth) ──
-       Funciona cuando el proveedor Google esté habilitado en Supabase
-       (Authentication → Providers → Google). */
+    /* ── Login con Google (Google Identity Services, nativo en la página) ──
+       No usa el redirect de Supabase: la pantalla de cuentas de Google
+       muestra el dominio real de SPORTLY360, no el de Supabase. */
+    const GOOGLE_CLIENT_ID = '716989992910-ppmgc75gr5f1i0u1f4rhjacu0iofo43i.apps.googleusercontent.com';
+    var googleNonce = null;
+
+    function b64urlEncode(bytes) {
+      var binary = '';
+      bytes.forEach(function(b) { binary += String.fromCharCode(b); });
+      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function generateNonce() {
+      var arr = new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      return b64urlEncode(arr);
+    }
+    async function sha256Hex(str) {
+      var enc = new TextEncoder().encode(str);
+      var buf = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    async function initGoogleSignIn() {
+      if (!window.google || !google.accounts || !google.accounts.id) return false;
+      googleNonce = generateNonce();
+      var hashed = await sha256Hex(googleNonce);
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential,
+        nonce: hashed,
+        use_fedcm_for_prompt: true
+      });
+      return true;
+    }
+
+    async function handleGoogleCredential(response) {
+      clearErr('login-err');
+      var res = await sb.auth.signInWithIdToken({
+        provider: 'google',
+        token: response.credential,
+        nonce: googleNonce
+      });
+      if (res.error) { showErr('login-err', res.error.message); return; }
+      irAInicio(res.data.user);
+    }
+
     async function loginGoogle() {
       clearErr('login-err');
-      var res = await sb.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + '/inicio.html' }
-      });
-      if (res.error) showErr('login-err', 'El acceso con Google aún no está configurado en Supabase.');
+      var ready = await initGoogleSignIn();
+      if (!ready) { showErr('login-err', 'No se pudo cargar el servicio de Google. Intenta de nuevo.'); return; }
+      google.accounts.id.prompt();
     }
 
     /* ── Login con Apple (Supabase OAuth) ── */
