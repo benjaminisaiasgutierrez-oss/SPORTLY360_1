@@ -249,12 +249,35 @@ create table if not exists public.equipo_stats (
   duelos_gan      int,   -- ídem, duelos ganados
   asistencias     int,   -- ídem, asistencias
   formacion       text,  -- formación más usada (ej. "4-2-3-1"), de /teams/statistics
-  formacion_veces int    -- en cuántos partidos se usó esa formación
+  formacion_veces int,   -- en cuántos partidos se usó esa formación
+  formacion_jugada int,  -- alias de formacion_veces (compatibilidad)
+  -- desglose local / visita (de /teams/statistics)
+  pj_local int, win_local int, draw_local int, lose_local int, gf_local int, ga_local int, cs_local int,
+  pj_visita int, win_visita int, draw_visita int, lose_visita int, gf_visita int, ga_visita int, cs_visita int,
+  mayor_victoria text, mayor_derrota text, racha_victorias int, sin_marcar int
 );
 create index if not exists idx_equipo_stats_comp_temp on public.equipo_stats(competicion_id, temporada, equipo);
 alter table public.equipo_stats enable row level security;
 drop policy if exists "equipo_stats_select_all" on public.equipo_stats;
 create policy "equipo_stats_select_all" on public.equipo_stats for select using (true);
+
+-- Últimos partidos por equipo/competición (para el bloque "Últimos partidos").
+create table if not exists public.partidos (
+  id              bigint generated always as identity primary key,
+  competicion_id  text not null references public.competiciones(id) on delete cascade,
+  temporada       text not null,
+  equipo          text not null,     -- equipo "dueño" de la fila
+  fecha           timestamptz,
+  local_nombre    text, local_logo text,
+  visita_nombre   text, visita_logo text,
+  gol_local       int, gol_visita int,
+  es_local        boolean,           -- si "equipo" jugó de local
+  resultado       text               -- 'W' / 'D' / 'L' desde la óptica de "equipo"
+);
+create index if not exists idx_partidos_comp_temp_equipo on public.partidos(competicion_id, temporada, equipo, fecha);
+alter table public.partidos enable row level security;
+drop policy if exists "partidos_select_all" on public.partidos;
+create policy "partidos_select_all" on public.partidos for select using (true);
 
 -- Ranking completo de asistencias por competición (no solo entre los goleadores).
 create table if not exists public.asistencias (

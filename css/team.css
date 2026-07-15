@@ -17,3 +17,34 @@
     .tv-v .nd { font-size: 11.5px; color: #b0b5ba; font-weight: 700; }
     @media (max-width: 560px) { .tv-grid { grid-template-columns: repeat(2, 1fr); } }
 
+    /* ─── Resumen v3: tarjetas de partidos + local/visita ─── */
+    .tm-card { background: #fff; border: 1px solid #e8eaed; border-radius: 14px; padding: 16px 17px; margin-top: 14px; animation: ppFade .4s ease both; }
+    .tm-ch { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: #8a9098; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+    .tm-ch svg { width: 15px; height: 15px; color: var(--acc-dark); }
+
+    /* Últimos partidos */
+    .tm-match { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid #f2f3f5; }
+    .tm-match:last-child { border-bottom: none; }
+    .tm-t { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 13px; color: #14171a; }
+    .tm-t img { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; }
+    .tm-t span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tm-t-r { justify-content: flex-end; text-align: right; }
+    .tm-own { font-weight: 800; }
+    .tm-score { flex-shrink: 0; min-width: 46px; text-align: center; font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; color: #fff; border-radius: 7px; padding: 5px 0; }
+    .tm-score.W { background: #2e9e57; }
+    .tm-score.D { background: #8a9098; }
+    .tm-score.L { background: #d64541; }
+
+    /* Local vs Visita */
+    .ha { display: grid; grid-template-columns: 1fr 1fr; }
+    .ha-col { padding: 2px 4px; }
+    .ha-col + .ha-col { border-left: 1px solid #eceef0; padding-left: 16px; }
+    .ha-col:first-child { padding-right: 16px; }
+    .ha-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+    .ha-tag.h { color: #2f7fd4; }
+    .ha-tag.a { color: #d98324; }
+    .ha-rec { font-size: 20px; font-weight: 800; color: #14171a; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+    .ha-rec small { font-size: 11px; color: #8a9098; font-weight: 600; margin-left: 6px; }
+    .ha-line { display: flex; justify-content: space-between; font-size: 12px; color: #8a9098; margin-top: 9px; }
+    .ha-line b { color: #14171a; font-variant-numeric: tabular-nums; }
+

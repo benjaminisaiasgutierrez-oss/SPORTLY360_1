@@ -1,6 +1,6 @@
 /* SPORTLY360° · js/team.js — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
     /* ═══ VISTA DE EQUIPO (Jugadores / Generales / Avanzadas) ═══ */
-    var teamName = null, teamSeason = null, teamRow = null, teamStats = null, teamPlayers = [], teamInfo = null;
+    var teamName = null, teamSeason = null, teamRow = null, teamStats = null, teamPlayers = [], teamInfo = null, teamMatches = [];
 
     var teamFrom = 'comp';
     function verEquipo(equipo) { teamFrom = 'comp'; loadTeam(equipo, currentSeason); }
@@ -17,11 +17,13 @@
         sb.from('posiciones').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1),
         sb.from('plantilla').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name),
         sb.from('equipo_stats').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1),
-        sb.from('equipos_info').select('*').eq('equipo', name).limit(1)
+        sb.from('equipos_info').select('*').eq('equipo', name).limit(1),
+        sb.from('partidos').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).order('fecha', { ascending: false }).limit(5)
       ]);
       teamRow = (r[0].data || [])[0] || null;
       teamStats = (r[2].data || [])[0] || null;
       teamInfo = (r[3].data || [])[0] || null;
+      teamMatches = r[4].data || [];
       var posOrden = { Goalkeeper: 0, Defender: 1, Midfielder: 2, Attacker: 3 };
       teamPlayers = (r[1].data || []).sort(function(a, b) {
         var pa = posOrden[a.posicion], pb = posOrden[b.posicion];
@@ -140,11 +142,6 @@
           '<div class="season-nav">' + seasonNavInner(teamSeason, 'cambiarTempEquipo') + '</div>' +
         '</div>';
 
-      /* Forma reciente (real si existe; si no, estructura lista) */
-      var forma = t.form
-        ? '<div class="tv-form" style="margin:2px 2px 0">' + formHtml(t.form) + '</div>'
-        : '<div class="pp-desc" style="font-size:13px;margin:2px">Forma reciente no disponible</div>';
-
       /* Jugadores del equipo: plantilla completa (tabla clickable, se conserva la funcionalidad) */
       var posLabel = { Goalkeeper: 'POR', Defender: 'DEF', Midfielder: 'MED', Attacker: 'DEL' };
       var rows = teamPlayers.length ? teamPlayers.map(function (p, i) {
@@ -182,9 +179,41 @@
           '</div>';
       }
 
-      var resumen = radarSvg(cats) +
-        '<div class="pp-title"><span class="pp-tico">' + TI.forma + '</span>Forma reciente</div>' + forma +
+      /* ── Últimos partidos (escudos + nombre + marcador en color) ── */
+      var esc2 = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
+      var ultimos = teamMatches.length ? teamMatches.map(function (m) {
+        var cls = m.resultado === 'W' ? 'W' : (m.resultado === 'L' ? 'L' : 'D');
+        var marcador = (m.gol_local != null && m.gol_visita != null) ? (m.gol_local + '-' + m.gol_visita) : 'vs';
+        return '<div class="tm-match">' +
+          '<div class="tm-t"><img src="' + esc2(m.local_logo) + '" alt="" onerror="this.style.visibility=\'hidden\'"><span' + (m.es_local ? ' class="tm-own"' : '') + '>' + m.local_nombre + '</span></div>' +
+          '<div class="tm-score ' + cls + '">' + marcador + '</div>' +
+          '<div class="tm-t tm-t-r"><span' + (!m.es_local ? ' class="tm-own"' : '') + '>' + m.visita_nombre + '</span><img src="' + esc2(m.visita_logo) + '" alt="" onerror="this.style.visibility=\'hidden\'"></div>' +
+        '</div>';
+      }).join('') : '<div class="tv-note">Sin partidos recientes.</div>';
+
+      /* ── Local vs Visita ── */
+      var haCol = function (tag, cls, w, d, l, gf, ga) {
+        var pjTot = (w || 0) + (d || 0) + (l || 0);
+        var winPctH = pjTot ? Math.round(w / pjTot * 100) : 0;
+        return '<div class="ha-col">' +
+          '<div class="ha-tag ' + cls + '">' + tag + '</div>' +
+          '<div class="ha-rec">' + (w || 0) + '-' + (d || 0) + '-' + (l || 0) + ' <small>PJ ' + pjTot + '</small></div>' +
+          '<div class="ha-line"><span>Goles a favor</span><b>' + (gf || 0) + '</b></div>' +
+          '<div class="ha-line"><span>Goles en contra</span><b>' + (ga || 0) + '</b></div>' +
+          '<div class="ha-line"><span>% victorias</span><b>' + winPctH + '%</b></div>' +
+        '</div>';
+      };
+      var hayHA = (es.win_local != null || es.win_visita != null);
+      var localVisita = hayHA ? '<div class="ha">' +
+        haCol('Local', 'h', es.win_local, es.draw_local, es.lose_local, es.gf_local, es.ga_local) +
+        haCol('Visita', 'a', es.win_visita, es.draw_visita, es.lose_visita, es.gf_visita, es.ga_visita) +
+      '</div>' : '<div class="tv-note">Sin datos de local/visita.</div>';
+
+      var resumen =
+        '<div class="tm-card"><div class="tm-ch">' + TI.forma + ' Últimos partidos</div>' + ultimos + '</div>' +
+        '<div class="tm-card"><div class="tm-ch">◨ Local vs Visita</div>' + localVisita + '</div>' +
         formacionPanel +
+        radarSvg(cats) +
         ppSection(TI.info, 'Información general', [
           ['Nombre', t.equipo], ['Nombre corto', nd(ei.codigo)], ['País', nd(ei.pais || pais)], ['Fundación', nd(ei.fundacion)],
           ['Estadio', nd(ei.estadio)], ['Capacidad', ei.capacidad != null ? Number(ei.capacidad).toLocaleString('es-CL') : nd(null)],
