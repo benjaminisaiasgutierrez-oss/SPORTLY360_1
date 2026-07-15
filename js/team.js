@@ -169,21 +169,6 @@
 
       var esc2 = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
 
-      /* Modal de formación (cancha ampliable) — se conserva */
-      var formModal = '';
-      var _pit = '';
-      if (teamPlayers.length >= 11) {
-        _pit = _pitchHtml(_buildXI(es.formacion, teamPlayers));
-        formModal =
-          '<div id="form-modal" class="form-modal hidden" onclick="cerrarFormacion(event)">' +
-            '<div class="form-modal-inner">' +
-              '<button class="form-modal-x" onclick="cerrarFormacion(event)" aria-label="Cerrar">&times;</button>' +
-              '<div class="fp-modal-title">' + t.equipo + ' &middot; ' + (es.formacion || 'XI probable') + '</div>' +
-              '<div class="fpitch fpitch-lg">' + _pit + '</div>' +
-            '</div>' +
-          '</div>';
-      }
-
       /* ── Bento 1: Últimos partidos ── */
       var ultimos = teamMatches.length ? teamMatches.map(function (m) {
         var cls = m.resultado === 'W' ? 'W' : (m.resultado === 'L' ? 'L' : 'D');
@@ -213,15 +198,7 @@
         haCol('Visita', 'a', es.win_visita, es.draw_visita, es.lose_visita, es.gf_visita, es.ga_visita) +
       '</div>' : '<div class="tm-empty">Sin datos de local/visita.</div>';
 
-      /* ── Bento 3: Formación más usada (cancha con fotos, ampliable) ── */
-      var formacionInner = _pit
-        ? '<div class="tm-formacion" onclick="abrirFormacion()" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\')abrirFormacion()" aria-label="Ampliar formación">' +
-            '<div class="fpitch">' + _pit + '</div></div>' +
-          '<div class="tm-form-name">' + (es.formacion || 'XI probable') + '</div>' +
-          '<div class="tm-form-sub">' + (es.formacion_veces ? 'Usada en ' + es.formacion_veces + ' de ' + pj + ' partidos' : 'XI probable') + '</div>'
-        : '<div class="tm-empty">Formación no disponible.</div>';
-
-      /* ── Bento 4: Goles esperados (xG) ── */
+      /* ── Bento: Goles esperados (xG) ── */
       var xgFor = es.xg_favor, xgAg = es.xg_contra;
       var xgBar = function (lab, v, cls) {
         var w = v == null ? 0 : Math.max(3, Math.min(100, v / 3 * 100));
@@ -248,7 +225,6 @@
         '<div class="tm-canvas"><div class="tm-bento">' +
           '<div class="tm-card tm-wide"><div class="tm-ch">Últimos partidos</div>' + ultimos + '</div>' +
           '<div class="tm-card tm-wide"><div class="tm-ch">Local vs Visita</div>' + localVisita + '</div>' +
-          '<div class="tm-card tm-wide"><div class="tm-ch">Formación más usada</div>' + formacionInner + '</div>' +
           '<div class="tm-card tm-wide"><div class="tm-ch">Goles esperados (xG) · promedio por partido</div>' + xgHtml + '</div>' +
           '<div class="tm-card tm-wide"><div class="tm-ch">Números de la temporada</div>' + numeros + '</div>' +
         '</div></div>';
@@ -279,8 +255,7 @@
         '<div id="team-view-resumen">' + resumen + '</div>' +
         '<div id="team-view-jugadores" class="hidden">' + jugadores + '</div>' +
         '<div id="team-view-estadisticas" class="hidden">' + estadisticas + '</div>' +
-        '<div id="team-view-avanzadas" class="hidden">' + avanzadas + '</div>' +
-        formModal;
+        '<div id="team-view-avanzadas" class="hidden">' + avanzadas + '</div>';
 
       animarBarras();
       animarContadores();
