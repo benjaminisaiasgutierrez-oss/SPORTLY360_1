@@ -69,11 +69,13 @@
       return rows;
     }
     function _pitchHtml(rows) {
+      /* Cancha VERTICAL: arquero abajo (rows[0]), ataque arriba (última fila).
+         Cada fila se reparte horizontalmente; las filas se reparten en vertical. */
       var L = rows.length, html = '';
       rows.forEach(function (row, ci) {
-        var x = L > 1 ? (7 + ci * (87 / (L - 1))) : 50;
+        var y = L > 1 ? (90 - ci * (80 / (L - 1))) : 50;   // ci=0 (arquero) abajo 90%, ataque arriba 10%
         row.forEach(function (p, ri) {
-          var y = (ri + 1) * (100 / (row.length + 1));
+          var x = (ri + 1) * (100 / (row.length + 1));      // reparto horizontal dentro de la línea
           var eq = (p.jugador || '').replace(/"/g, '&quot;');
           var img = p.foto ? '<img src="' + p.foto + '" alt="" onerror="this.style.display=\'none\'">' : '';
           html += '<div class="fp-player" data-pl="' + eq + '" onclick="event.stopPropagation();verFormJugador(this.dataset.pl)" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'){event.stopPropagation();verFormJugador(this.dataset.pl);}" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%">' +

@@ -6,20 +6,20 @@
 .fp-caption { font-size: 12px; color: var(--txt-dim); text-align: center; margin-top: 10px; }
 .fp-expand { color: var(--accent); font-weight: 700; }
 
-/* Cancha */
+/* Cancha VERTICAL (arquero abajo, ataque arriba) */
 .fpitch {
-  position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden;
+  position: relative; width: 100%; aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden;
   border: 1px solid rgba(255,255,255,.12);
   background:
-    repeating-linear-gradient(90deg, #17381199 0 8%, #1d441799 8% 16%);
+    repeating-linear-gradient(0deg, #17381199 0 8%, #1d441799 8% 16%);
   transition: border-color .15s;
 }
-.fpitch::before {
-  content: ''; position: absolute; left: 50%; top: 6%; bottom: 6%; width: 1px;
+.fpitch::before {   /* línea de medio campo (horizontal) */
+  content: ''; position: absolute; top: 50%; left: 5%; right: 5%; height: 1px;
   background: rgba(255,255,255,.16);
 }
-.fpitch::after {
-  content: ''; position: absolute; left: 50%; top: 50%; width: 66px; height: 66px;
+.fpitch::after {    /* círculo central */
+  content: ''; position: absolute; left: 50%; top: 50%; width: 58px; height: 58px;
   transform: translate(-50%,-50%); border: 1px solid rgba(255,255,255,.16); border-radius: 50%;
 }
 
@@ -62,12 +62,12 @@
 }
 .form-modal-x:hover { background: rgba(255,255,255,.16); color: #fff; }
 
-/* Cancha grande dentro del modal */
-.fpitch-lg { aspect-ratio: 16 / 10; }
-.fpitch-lg .fp-ava { width: 46px; height: 46px; border-width: 2.5px; }
-.fpitch-lg .fp-ava b { font-size: 15px; }
-.fpitch-lg .fp-name { font-size: 11.5px; max-width: 90px; margin-top: 1px; }
-.fpitch-lg::after { width: 100px; height: 100px; }
+/* Cancha grande dentro del modal (vertical, centrada) */
+.fpitch-lg { aspect-ratio: 3 / 4; max-width: 440px; margin: 0 auto; }
+.fpitch-lg .fp-ava { width: 44px; height: 44px; border-width: 2.5px; }
+.fpitch-lg .fp-ava b { font-size: 14px; }
+.fpitch-lg .fp-name { font-size: 11px; max-width: 84px; margin-top: 2px; }
+.fpitch-lg::after { width: 86px; height: 86px; }
 
 @media (max-width: 620px) {
   .fpitch-lg .fp-ava { width: 38px; height: 38px; }

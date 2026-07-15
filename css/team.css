@@ -71,8 +71,8 @@
     .tm-ha-line { display: flex; justify-content: space-between; font-size: 12px; color: var(--tm-dim); margin-top: 9px; }
     .tm-ha-line b { color: var(--tm-text); font-variant-numeric: tabular-nums; }
 
-    /* Formación (cancha centrada, con espacio para los 11 jugadores) */
-    .tm-formacion { cursor: pointer; border-radius: 12px; transition: transform .15s; max-width: 540px; margin: 0 auto; }
+    /* Formación (cancha vertical centrada, con espacio para los 11 jugadores) */
+    .tm-formacion { cursor: pointer; border-radius: 12px; transition: transform .15s; max-width: 340px; margin: 0 auto; }
     .tm-formacion:hover { transform: translateY(-2px); }
     .tm-formacion:hover .fpitch { border-color: var(--tm-accent); }
     .tm-form-name { font-size: 19px; font-weight: 850; letter-spacing: 1px; margin-top: 12px; color: var(--tm-text); text-align: center; }
