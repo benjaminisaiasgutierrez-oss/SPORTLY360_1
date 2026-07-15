@@ -157,18 +157,13 @@
       var jugadores = '<div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Jugadores (' + teamPlayers.length + ')</div>' +
         '<div class="card"><table><thead><tr><th>#</th><th class="team-col">Jugador</th><th>Pos</th><th>PJ</th><th>Goles</th><th>Asist.</th><th><span class="cd cd-y"></span></th><th><span class="cd cd-r"></span></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 
-      /* Formación más usada: cancha con XI probable (fotos clickables + ampliable) */
-      var formacionPanel = '', formModal = '';
+      var esc2 = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
+
+      /* Modal de formación (cancha ampliable) — se conserva */
+      var formModal = '';
+      var _pit = '';
       if (teamPlayers.length >= 11) {
-        var _rows = _buildXI(es.formacion, teamPlayers);
-        var _pit = _pitchHtml(_rows);
-        var _cap = (es.formacion || 'XI probable') + (es.formacion_veces ? ' &middot; ' + es.formacion_veces + ' partidos' : '');
-        formacionPanel =
-          '<div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Formación más usada</div>' +
-          '<div class="tv-formacion" onclick="abrirFormacion()" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\')abrirFormacion()" aria-label="Ampliar formación">' +
-            '<div class="fpitch">' + _pit + '</div>' +
-            '<div class="fp-caption">' + _cap + ' &middot; <span class="fp-expand">toca para ampliar</span></div>' +
-          '</div>';
+        _pit = _pitchHtml(_buildXI(es.formacion, teamPlayers));
         formModal =
           '<div id="form-modal" class="form-modal hidden" onclick="cerrarFormacion(event)">' +
             '<div class="form-modal-inner">' +
@@ -179,8 +174,7 @@
           '</div>';
       }
 
-      /* ── Últimos partidos (escudos + nombre + marcador en color) ── */
-      var esc2 = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
+      /* ── Bento 1: Últimos partidos ── */
       var ultimos = teamMatches.length ? teamMatches.map(function (m) {
         var cls = m.resultado === 'W' ? 'W' : (m.resultado === 'L' ? 'L' : 'D');
         var marcador = (m.gol_local != null && m.gol_visita != null) ? (m.gol_local + '-' + m.gol_visita) : 'vs';
@@ -189,36 +183,65 @@
           '<div class="tm-score ' + cls + '">' + marcador + '</div>' +
           '<div class="tm-t tm-t-r"><span' + (!m.es_local ? ' class="tm-own"' : '') + '>' + m.visita_nombre + '</span><img src="' + esc2(m.visita_logo) + '" alt="" onerror="this.style.visibility=\'hidden\'"></div>' +
         '</div>';
-      }).join('') : '<div class="tv-note">Sin partidos recientes.</div>';
+      }).join('') : '<div class="tm-empty">Sin partidos recientes.</div>';
 
-      /* ── Local vs Visita ── */
+      /* ── Bento 2: Local vs Visita ── */
       var haCol = function (tag, cls, w, d, l, gf, ga) {
         var pjTot = (w || 0) + (d || 0) + (l || 0);
         var winPctH = pjTot ? Math.round(w / pjTot * 100) : 0;
-        return '<div class="ha-col">' +
-          '<div class="ha-tag ' + cls + '">' + tag + '</div>' +
-          '<div class="ha-rec">' + (w || 0) + '-' + (d || 0) + '-' + (l || 0) + ' <small>PJ ' + pjTot + '</small></div>' +
-          '<div class="ha-line"><span>Goles a favor</span><b>' + (gf || 0) + '</b></div>' +
-          '<div class="ha-line"><span>Goles en contra</span><b>' + (ga || 0) + '</b></div>' +
-          '<div class="ha-line"><span>% victorias</span><b>' + winPctH + '%</b></div>' +
+        return '<div class="tm-ha-col">' +
+          '<div class="tm-ha-tag ' + cls + '">' + tag + '</div>' +
+          '<div class="tm-ha-rec">' + (w || 0) + '-' + (d || 0) + '-' + (l || 0) + ' <small>PJ ' + pjTot + '</small></div>' +
+          '<div class="tm-ha-line"><span>Goles a favor</span><b>' + (gf || 0) + '</b></div>' +
+          '<div class="tm-ha-line"><span>Goles en contra</span><b>' + (ga || 0) + '</b></div>' +
+          '<div class="tm-ha-line"><span>% victorias</span><b>' + winPctH + '%</b></div>' +
         '</div>';
       };
       var hayHA = (es.win_local != null || es.win_visita != null);
-      var localVisita = hayHA ? '<div class="ha">' +
+      var localVisita = hayHA ? '<div class="tm-ha">' +
         haCol('Local', 'h', es.win_local, es.draw_local, es.lose_local, es.gf_local, es.ga_local) +
         haCol('Visita', 'a', es.win_visita, es.draw_visita, es.lose_visita, es.gf_visita, es.ga_visita) +
-      '</div>' : '<div class="tv-note">Sin datos de local/visita.</div>';
+      '</div>' : '<div class="tm-empty">Sin datos de local/visita.</div>';
 
+      /* ── Bento 3: Formación más usada (cancha con fotos, ampliable) ── */
+      var formacionInner = _pit
+        ? '<div class="tm-formacion" onclick="abrirFormacion()" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\')abrirFormacion()" aria-label="Ampliar formación">' +
+            '<div class="fpitch">' + _pit + '</div></div>' +
+          '<div class="tm-form-name">' + (es.formacion || 'XI probable') + '</div>' +
+          '<div class="tm-form-sub">' + (es.formacion_veces ? 'Usada en ' + es.formacion_veces + ' de ' + pj + ' partidos' : 'XI probable') + '</div>'
+        : '<div class="tm-empty">Formación no disponible.</div>';
+
+      /* ── Bento 4: Goles esperados (xG) ── */
+      var xgFor = es.xg_favor, xgAg = es.xg_contra;
+      var xgBar = function (lab, v, cls) {
+        var w = v == null ? 0 : Math.max(3, Math.min(100, v / 3 * 100));
+        return '<div class="tm-xg-row"><span class="tm-xg-lab">' + lab + '</span>' +
+          '<div class="tm-xg-track"><div class="tm-xg-fill ' + cls + '" style="width:' + w.toFixed(0) + '%"></div></div>' +
+          '<span class="tm-xg-val">' + (v == null ? '&ndash;' : Number(v).toFixed(2)) + '</span></div>';
+      };
+      var xgHtml = (xgFor != null || xgAg != null)
+        ? xgBar('xG a favor', xgFor, 'for') + xgBar('xG en contra', xgAg, 'against')
+        : '<div class="tm-empty">Calculando xG… (disponible en breve)</div>';
+
+      /* ── Bento 5: Números de la temporada ── */
+      var numMini = function (v, k, lime) { return '<div class="tm-m"><div class="tm-m-v' + (lime ? ' lime' : '') + '">' + v + '</div><div class="tm-m-k">' + k + '</div></div>'; };
+      var ndDash = function (v) { return (v == null || v === '') ? '&ndash;' : v; };
+      var numeros = '<div class="tm-mini">' +
+        numMini(ndDash(porterias), 'Porterías imbatidas', true) +
+        numMini(promGF != null ? promGF.toFixed(1) : '&ndash;', 'Goles / partido') +
+        numMini(ndDash(es.mayor_victoria), 'Mayor victoria') +
+        numMini(ndDash(es.racha_victorias), 'Racha de victorias') +
+      '</div>';
+
+      /* ── Lienzo oscuro (paleta ajustable en .tm-canvas del CSS) ── */
       var resumen =
-        '<div class="tm-card"><div class="tm-ch">' + TI.forma + ' Últimos partidos</div>' + ultimos + '</div>' +
-        '<div class="tm-card"><div class="tm-ch">◨ Local vs Visita</div>' + localVisita + '</div>' +
-        formacionPanel +
-        radarSvg(cats) +
-        ppSection(TI.info, 'Información general', [
-          ['Nombre', t.equipo], ['Nombre corto', nd(ei.codigo)], ['País', nd(ei.pais || pais)], ['Fundación', nd(ei.fundacion)],
-          ['Estadio', nd(ei.estadio)], ['Capacidad', ei.capacidad != null ? Number(ei.capacidad).toLocaleString('es-CL') : nd(null)],
-          ['Ciudad', nd(ei.ciudad)], ['Entrenador', nd(ei.entrenador)], ['Colores', nd(null)]
-        ]);
+        '<div class="tm-canvas"><div class="tm-bento">' +
+          '<div class="tm-card tm-wide"><div class="tm-ch">Últimos partidos</div>' + ultimos + '</div>' +
+          '<div class="tm-card"><div class="tm-ch">Local vs Visita</div>' + localVisita + '</div>' +
+          '<div class="tm-card"><div class="tm-ch">Formación más usada</div>' + formacionInner + '</div>' +
+          '<div class="tm-card tm-wide"><div class="tm-ch">Goles esperados (xG) · promedio por partido</div>' + xgHtml + '</div>' +
+          '<div class="tm-card tm-wide"><div class="tm-ch">Números de la temporada</div>' + numeros + '</div>' +
+        '</div></div>';
 
       var estadisticas = ppSection(PPICO.rend, 'Rendimiento', [
           ['Puntos/partido', pv(ppp, 2)], ['Goles/partido', pv(promGF, 2)], ['Recibidos/partido', pv(promGA, 2)], ['Dif. gol promedio', pv(dgProm, 2)],
