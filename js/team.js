@@ -30,6 +30,56 @@
       renderTeam();
     }
 
+    /* ── Formación más usada: cancha con XI probable (fotos clickables) ── */
+    function _formLines(f) {
+      var n = (f || '').split('-').map(function (x) { return parseInt(x, 10); }).filter(function (x) { return x > 0; });
+      return n.length ? n : [4, 3, 3];
+    }
+    function _ini(nm) {
+      var p = (nm || '?').trim().split(/\s+/);
+      return (p[0].charAt(0) + (p.length > 1 ? p[p.length - 1].charAt(0) : '')).toUpperCase();
+    }
+    function _short(nm) { var p = (nm || '').trim().split(/\s+/); return p[p.length - 1] || nm; }
+    function _buildXI(formStr, players) {
+      var by = function (pos) { return players.filter(function (p) { return p.posicion === pos; }); };
+      var gk = by('Goalkeeper'), def = by('Defender'), mid = by('Midfielder'), att = by('Attacker');
+      var used = {};
+      var take = function (pool, n) { var o = []; for (var i = 0; i < pool.length && o.length < n; i++) { if (!used[pool[i].jugador]) { used[pool[i].jugador] = 1; o.push(pool[i]); } } return o; };
+      var takeAny = function (n) { return take(players, n); };
+      var lines = _formLines(formStr), rows = [];
+      var gkRow = take(gk, 1); if (!gkRow.length) gkRow = takeAny(1); rows.push(gkRow);
+      lines.forEach(function (cnt, idx) {
+        var picked = idx === 0 ? take(def, cnt) : (idx === lines.length - 1 ? take(att, cnt) : take(mid, cnt));
+        if (picked.length < cnt) picked = picked.concat(take(mid, cnt - picked.length));
+        if (picked.length < cnt) picked = picked.concat(take(att, cnt - picked.length));
+        if (picked.length < cnt) picked = picked.concat(take(def, cnt - picked.length));
+        if (picked.length < cnt) picked = picked.concat(takeAny(cnt - picked.length));
+        rows.push(picked);
+      });
+      return rows;
+    }
+    function _pitchHtml(rows) {
+      var L = rows.length, html = '';
+      rows.forEach(function (row, ci) {
+        var x = L > 1 ? (7 + ci * (87 / (L - 1))) : 50;
+        row.forEach(function (p, ri) {
+          var y = (ri + 1) * (100 / (row.length + 1));
+          var eq = (p.jugador || '').replace(/"/g, '&quot;');
+          var img = p.foto ? '<img src="' + p.foto + '" alt="" onerror="this.style.display=\'none\'">' : '';
+          html += '<div class="fp-player" data-pl="' + eq + '" onclick="event.stopPropagation();verFormJugador(this.dataset.pl)" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'){event.stopPropagation();verFormJugador(this.dataset.pl);}" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%">' +
+            '<span class="fp-ava"><b>' + _ini(p.jugador) + '</b>' + img + '</span>' +
+            '<span class="fp-name">' + _short(p.jugador) + '</span></div>';
+        });
+      });
+      return html;
+    }
+    function abrirFormacion() { var m = document.getElementById('form-modal'); if (m) { m.classList.remove('hidden'); document.body.style.overflow = 'hidden'; } }
+    function cerrarFormacion(e) {
+      if (e && e.target && !e.target.classList.contains('form-modal') && !e.target.classList.contains('form-modal-x')) return;
+      var m = document.getElementById('form-modal'); if (m) m.classList.add('hidden'); document.body.style.overflow = '';
+    }
+    function verFormJugador(nombre) { cerrarFormacion(); verJugador(nombre, 'team'); }
+
     /* ── Panel de equipo PREMIUM (misma calidad que el perfil del jugador) ── */
     function renderTeam() {
       _ppI = 0;
@@ -110,8 +160,31 @@
       var jugadores = '<div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Jugadores (' + teamPlayers.length + ')</div>' +
         '<div class="card"><table><thead><tr><th>#</th><th class="team-col">Jugador</th><th>Pos</th><th>PJ</th><th>Goles</th><th>Asist.</th><th><span class="cd cd-y"></span></th><th><span class="cd cd-r"></span></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 
+      /* Formación más usada: cancha con XI probable (fotos clickables + ampliable) */
+      var formacionPanel = '', formModal = '';
+      if (teamPlayers.length >= 11) {
+        var _rows = _buildXI(es.formacion, teamPlayers);
+        var _pit = _pitchHtml(_rows);
+        var _cap = (es.formacion || 'XI probable') + (es.formacion_veces ? ' &middot; ' + es.formacion_veces + ' partidos' : '');
+        formacionPanel =
+          '<div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Formación más usada</div>' +
+          '<div class="tv-formacion" onclick="abrirFormacion()" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\')abrirFormacion()" aria-label="Ampliar formación">' +
+            '<div class="fpitch">' + _pit + '</div>' +
+            '<div class="fp-caption">' + _cap + ' &middot; <span class="fp-expand">toca para ampliar</span></div>' +
+          '</div>';
+        formModal =
+          '<div id="form-modal" class="form-modal hidden" onclick="cerrarFormacion(event)">' +
+            '<div class="form-modal-inner">' +
+              '<button class="form-modal-x" onclick="cerrarFormacion(event)" aria-label="Cerrar">&times;</button>' +
+              '<div class="fp-modal-title">' + t.equipo + ' &middot; ' + (es.formacion || 'XI probable') + '</div>' +
+              '<div class="fpitch fpitch-lg">' + _pit + '</div>' +
+            '</div>' +
+          '</div>';
+      }
+
       var resumen = radarSvg(cats) +
         '<div class="pp-title"><span class="pp-tico">' + TI.forma + '</span>Forma reciente</div>' + forma +
+        formacionPanel +
         ppSection(TI.info, 'Información general', [
           ['Nombre', t.equipo], ['Nombre corto', nd(ei.codigo)], ['País', nd(ei.pais || pais)], ['Fundación', nd(ei.fundacion)],
           ['Estadio', nd(ei.estadio)], ['Capacidad', ei.capacidad != null ? Number(ei.capacidad).toLocaleString('es-CL') : nd(null)],
@@ -144,7 +217,8 @@
         '<div id="team-view-resumen">' + resumen + '</div>' +
         '<div id="team-view-jugadores" class="hidden">' + jugadores + '</div>' +
         '<div id="team-view-estadisticas" class="hidden">' + estadisticas + '</div>' +
-        '<div id="team-view-avanzadas" class="hidden">' + avanzadas + '</div>';
+        '<div id="team-view-avanzadas" class="hidden">' + avanzadas + '</div>' +
+        formModal;
 
       animarBarras();
       animarContadores();

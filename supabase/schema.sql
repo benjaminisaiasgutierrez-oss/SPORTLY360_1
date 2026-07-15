@@ -247,7 +247,9 @@ create table if not exists public.equipo_stats (
   entradas        int,   -- ídem, tackles
   intercepciones  int,   -- ídem, intercepciones
   duelos_gan      int,   -- ídem, duelos ganados
-  asistencias     int    -- ídem, asistencias
+  asistencias     int,   -- ídem, asistencias
+  formacion       text,  -- formación más usada (ej. "4-2-3-1"), de /teams/statistics
+  formacion_veces int    -- en cuántos partidos se usó esa formación
 );
 create index if not exists idx_equipo_stats_comp_temp on public.equipo_stats(competicion_id, temporada, equipo);
 alter table public.equipo_stats enable row level security;
