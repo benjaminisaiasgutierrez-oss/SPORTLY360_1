@@ -245,8 +245,8 @@
       var resumen =
         '<div class="tm-canvas"><div class="tm-bento">' +
           '<div class="tm-card tm-wide"><div class="tm-ch">Últimos partidos</div>' + ultimos + '</div>' +
-          '<div class="tm-card"><div class="tm-ch">Local vs Visita</div>' + localVisita + '</div>' +
-          '<div class="tm-card"><div class="tm-ch">Formación más usada</div>' + formacionInner + '</div>' +
+          '<div class="tm-card tm-wide"><div class="tm-ch">Local vs Visita</div>' + localVisita + '</div>' +
+          '<div class="tm-card tm-wide"><div class="tm-ch">Formación más usada</div>' + formacionInner + '</div>' +
           '<div class="tm-card tm-wide"><div class="tm-ch">Goles esperados (xG) · promedio por partido</div>' + xgHtml + '</div>' +
           '<div class="tm-card tm-wide"><div class="tm-ch">Números de la temporada</div>' + numeros + '</div>' +
         '</div></div>';
