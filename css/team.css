@@ -18,24 +18,26 @@
     @media (max-width: 560px) { .tv-grid { grid-template-columns: repeat(2, 1fr); } }
 
     /* ═══ Resumen v4 · bento oscuro (idéntico a la maqueta) ═══
-       PALETA AJUSTABLE — cambia solo estas variables para recolorear todo el resumen. */
+       Usa EXCLUSIVAMENTE la paleta de la web (variables.css) + los colores de
+       resultado que la web ya usa en la tabla (.f-W / .f-D / .f-L). No hay
+       colores nuevos: cambiar la paleta del sitio recolorea también el resumen. */
     .tm-canvas {
-      --tm-bg: #090a08;
-      --tm-surface: #141613;
-      --tm-surface-2: #1b1e19;
-      --tm-line: rgba(255,255,255,.08);
-      --tm-text: #f3f4ef;
-      --tm-dim: rgba(243,244,239,.56);
-      --tm-faint: rgba(243,244,239,.34);
-      --tm-accent: #c6ff00;
-      --tm-win: #37c46a;
-      --tm-draw: #6b6f64;
-      --tm-loss: #ff5d54;
-      --tm-home: #7cc4ff;
-      --tm-away: #ffb35c;
+      --tm-bg: var(--card);                 /* #0d0d0d */
+      --tm-surface: #141414;
+      --tm-surface-2: #1b1b1b;
+      --tm-line: var(--line);
+      --tm-text: #fff;
+      --tm-dim: var(--txt-dim);
+      --tm-faint: rgba(255,255,255,.34);
+      --tm-accent: var(--accent);           /* lima */
+      --tm-win: #2e7d32;                     /* mismo verde de la tabla (.f-W) */
+      --tm-draw: #616161;                    /* mismo gris (.f-D) */
+      --tm-loss: #c62828;                    /* mismo rojo (.f-L) */
+      --tm-home: var(--accent);              /* local: acento lima */
+      --tm-away: var(--txt-dim);             /* visita: neutro */
 
       background:
-        radial-gradient(900px 380px at 50% -10%, rgba(198,255,0,.06), transparent 70%),
+        radial-gradient(900px 380px at 50% -10%, rgba(198,255,0,.05), transparent 70%),
         var(--tm-bg);
       color: var(--tm-text);
       border: 1px solid var(--tm-line);

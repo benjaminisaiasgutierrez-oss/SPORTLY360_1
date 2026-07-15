@@ -47,17 +47,25 @@
       var gk = by('Goalkeeper'), def = by('Defender'), mid = by('Midfielder'), att = by('Attacker');
       var used = {};
       var take = function (pool, n) { var o = []; for (var i = 0; i < pool.length && o.length < n; i++) { if (!used[pool[i].jugador]) { used[pool[i].jugador] = 1; o.push(pool[i]); } } return o; };
-      var takeAny = function (n) { return take(players, n); };
+      /* Rellena n jugadores probando cada pool en orden (ej. [att, mid, def]) */
+      var fill = function (n, pools) {
+        var o = [];
+        for (var pi = 0; pi < pools.length && o.length < n; pi++) o = o.concat(take(pools[pi], n - o.length));
+        return o;
+      };
       var lines = _formLines(formStr), rows = [];
-      var gkRow = take(gk, 1); if (!gkRow.length) gkRow = takeAny(1); rows.push(gkRow);
-      lines.forEach(function (cnt, idx) {
-        var picked = idx === 0 ? take(def, cnt) : (idx === lines.length - 1 ? take(att, cnt) : take(mid, cnt));
-        if (picked.length < cnt) picked = picked.concat(take(mid, cnt - picked.length));
-        if (picked.length < cnt) picked = picked.concat(take(att, cnt - picked.length));
-        if (picked.length < cnt) picked = picked.concat(take(def, cnt - picked.length));
-        if (picked.length < cnt) picked = picked.concat(takeAny(cnt - picked.length));
-        rows.push(picked);
-      });
+      var gkRow = take(gk, 1); if (!gkRow.length) gkRow = fill(1, [def, mid, att, players]); rows.push(gkRow);
+
+      /* Línea 0 = defensas. Del resto: la línea de retención (primera tras la defensa)
+         prioriza mediocampistas; las líneas más adelantadas priorizan atacantes.
+         Así en 4-2-3-1 los extremos/delanteros van a la banda de ataque, no a la banca. */
+      var out = lines.slice(1);        // líneas de campo tras la defensa
+      var result = new Array(out.length);
+      for (var i = out.length - 1; i >= 1; i--) result[i] = fill(out[i], [att, mid, def, players]);
+      result[0] = out.length ? fill(out[0], [mid, att, def, players]) : [];
+
+      rows.push(fill(lines[0], [def, mid, att, players]));   // defensa
+      for (var j = 0; j < result.length; j++) rows.push(result[j]);
       return rows;
     }
     function _pitchHtml(rows) {
