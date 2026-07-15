@@ -164,8 +164,8 @@
           '<td class="pts">' + (p.goles || 0) + '</td><td>' + (p.asistencias || 0) + '</td>' +
           '<td class="c-yellow">' + (p.amarillas != null ? p.amarillas : 0) + '</td><td class="c-red">' + (p.rojas != null ? p.rojas : 0) + '</td></tr>';
       }).join('') : '<tr><td colspan="8" class="loading">Sin datos de jugadores para esta temporada.</td></tr>';
-      var jugadores = '<div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Jugadores (' + teamPlayers.length + ')</div>' +
-        '<div class="card"><table><thead><tr><th>#</th><th class="team-col">Jugador</th><th>Pos</th><th>PJ</th><th>Goles</th><th>Asist.</th><th><span class="cd cd-y"></span></th><th><span class="cd cd-r"></span></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+      var jugadores = '<div class="tm-canvas tm-canvas-pad"><div class="pp-title"><span class="pp-tico">' + TI.users + '</span>Jugadores (' + teamPlayers.length + ')</div>' +
+        '<div class="card"><table><thead><tr><th>#</th><th class="team-col">Jugador</th><th>Pos</th><th>PJ</th><th>Goles</th><th>Asist.</th><th><span class="cd cd-y"></span></th><th><span class="cd cd-r"></span></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
 
       var esc2 = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
 
@@ -229,13 +229,13 @@
           '<div class="tm-card tm-wide"><div class="tm-ch">Números de la temporada</div>' + numeros + '</div>' +
         '</div></div>';
 
-      var estadisticas = ppSection(PPICO.rend, 'Rendimiento', [
+      var estadisticas = '<div class="tm-canvas tm-canvas-pad">' + ppSection(PPICO.rend, 'Rendimiento', [
           ['Puntos/partido', pv(ppp, 2)], ['Goles/partido', pv(promGF, 2)], ['Recibidos/partido', pv(promGA, 2)], ['Dif. gol promedio', pv(dgProm, 2)],
           ['% victorias', pv(winPct, 0, '%'), { bar: winPct }], ['% derrotas', pv(losePct, 0, '%'), { bar: losePct }],
           ['% porterías imbatidas', pv(csPct, 0, '%'), { bar: csPct }], ['Tarjetas/partido', pv(cardsPP, 2)]
-        ]);
+        ]) + '</div>';
 
-      var avanzadas = ppSection(PPICO.ofe, 'Ofensivas', [
+      var avanzadas = '<div class="tm-canvas tm-canvas-pad">' + ppSection(PPICO.ofe, 'Ofensivas', [
           ['Goles', pv(t.gf)], ['Promedio de goles', pv(promGF, 2)], ['Tiros', nd(es.tiros)], ['Tiros al arco', nd(es.tiros_arco)],
           ['Conversión de tiros', conv != null ? pv(conv, 0, '%') : nd(null)], ['Asistencias', nd(es.asistencias)], ['Grandes ocasiones', nd(null)]
         ]) +
@@ -243,7 +243,7 @@
           ['Goles recibidos', pv(t.ga)], ['Porterías imbatidas', pv(porterias)], ['Intercepciones', nd(es.intercepciones)], ['Recuperaciones', nd(null)],
           ['Entradas', nd(es.entradas)], ['Duelos ganados', nd(es.duelos_gan)], ['Amarillas', pvCard(es.amarillas, 'c-yellow')], ['Rojas', pvCard(es.rojas, 'c-red')]
         ]) +
-        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada. Tiros/entradas/duelos son la suma real de todos los jugadores de la plantilla. Grandes ocasiones, recuperaciones y colores del club quedan como "Sin datos" (no publicados por la API).</div>';
+        '<div class="tv-note" style="margin-top:22px">Datos reales de la temporada. Tiros/entradas/duelos son la suma real de todos los jugadores de la plantilla. Grandes ocasiones, recuperaciones y colores del club quedan como "Sin datos" (no publicados por la API).</div></div>';
 
       document.getElementById('team-view').innerHTML = hero +
         '<div class="cc-chips" id="team-chips" role="group" aria-label="Secciones del equipo">' +
@@ -253,9 +253,9 @@
           '<button class="cc-chip" id="tchip-avanzadas" onclick="setTeamTab(\'avanzadas\')" aria-pressed="false">Avanzadas</button>' +
         '</div>' +
         '<div id="team-view-resumen">' + resumen + '</div>' +
-        '<div id="team-view-jugadores" class="hidden">' + jugadores + '</div>' +
-        '<div id="team-view-estadisticas" class="hidden">' + estadisticas + '</div>' +
-        '<div id="team-view-avanzadas" class="hidden">' + avanzadas + '</div>';
+        '<div id="team-view-jugadores" class="hidden"><div class="tm-canvas tm-canvas-pad">' + jugadores + '</div></div>' +
+        '<div id="team-view-estadisticas" class="hidden"><div class="tm-canvas tm-canvas-pad">' + estadisticas + '</div></div>' +
+        '<div id="team-view-avanzadas" class="hidden"><div class="tm-canvas tm-canvas-pad">' + avanzadas + '</div></div>';
 
       animarBarras();
       animarContadores();

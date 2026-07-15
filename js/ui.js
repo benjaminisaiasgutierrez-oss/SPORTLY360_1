@@ -30,5 +30,7 @@
       document.querySelector('.panel').classList.toggle('panel-home', id === 'home-view' || id === 'settings-view');   /* Inicio y Configuración: panel oscuro */
       if (_scrollMem[id] != null) window.scrollTo({ top: _scrollMem[id], behavior: 'auto' });   /* restaura */
       else window.scrollTo({ top: 0, behavior: 'smooth' });
+      /* v2.3: persiste la vista para que al recargar (F5) no vuelva a Inicio */
+      try { if (typeof _snapLoc === 'function') sessionStorage.setItem('sp-nav', JSON.stringify(_snapLoc())); } catch (e) {}
     }
 

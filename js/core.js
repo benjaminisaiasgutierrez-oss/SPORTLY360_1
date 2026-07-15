@@ -21,8 +21,23 @@
       });
       document.getElementById('sb-toggle').innerHTML = ico('colapsar', 17);
       renderSidebar();
-      irInicio();
+      restaurarVista();    /* v2.3: al recargar, vuelve a la vista donde estaba (no siempre a Inicio) */
       cargarFavoritos();   /* v1.1: carga favoritos del usuario y sincroniza la UI */
+    }
+
+    /* v2.3: restaura la última vista guardada en sessionStorage (equipo/jugador/competición) */
+    function restaurarVista() {
+      var s = null;
+      try { s = JSON.parse(sessionStorage.getItem('sp-nav')); } catch (e) {}
+      if (!s || !s.t || s.t === 'home') { irInicio(); return; }
+      var comp = comps.find(function (c) { return c.id === s.id; });
+      if (!comp) { irInicio(); return; }
+      if (s.t === 'comp') { seasonSel[s.id] = s.temp; selectComp(s.id); if (s.tab) setTab(s.tab); return; }
+      enHome = false; currentId = s.id; currentComp = comp; currentSeason = s.temp; seasonSel[s.id] = s.temp;
+      renderSidebar();
+      if (s.t === 'team') { teamFrom = 'comp'; loadTeam(s.nombre, s.temp); }
+      else if (s.t === 'player') { playerFrom = s.from || 'comp'; loadPlayer(s.nombre, s.temp); }
+      else irInicio();
     }
 
     var enHome = true;
