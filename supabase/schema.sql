@@ -227,7 +227,8 @@ create table if not exists public.equipos_info (
   ciudad          text,
   capacidad       int,
   entrenador      text,
-  entrenador_foto text
+  entrenador_foto text,
+  color           text   -- color principal, extraído del escudo (color dominante del logo)
 );
 alter table public.equipos_info enable row level security;
 drop policy if exists "equipos_info_select_all" on public.equipos_info;
