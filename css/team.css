@@ -134,12 +134,19 @@
     .ms-v.r { text-align: right; }
     .ms-v.win { color: var(--acc-dark); }
     .ms-k { font-size: 12px; color: var(--dim); font-weight: 600; text-align: center; }
-    .ms-bars { display: flex; gap: 3px; height: 7px; }
+    .ms-bars { display: flex; gap: 3px; height: 8px; }
     .ms-side { flex: 1; display: flex; }
     .ms-side.l { justify-content: flex-end; }
     .ms-bar { height: 100%; border-radius: 99px; }
     .ms-bar.ours { background: linear-gradient(90deg, #9fce00, var(--accent)); }
     .ms-bar.rival { background: #c9ced4; }
     .ms-side.l .ms-bar.ours { background: linear-gradient(270deg, #9fce00, var(--accent)); }
+    /* barras coloreadas con la camiseta del partido: contorno para que los kits claros se vean */
+    .ms-bar.kit { box-shadow: inset 0 0 0 1px rgba(0,0,0,.16); }
+    .ms-poss > div.kit { box-shadow: inset 0 0 0 1px rgba(0,0,0,.14); }
+
+    /* leyenda de colores de camiseta */
+    .ms-leg { display: flex; justify-content: center; gap: 22px; margin-top: 14px; font-size: 11.5px; color: var(--dim); }
+    .ms-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: middle; box-shadow: inset 0 0 0 1px rgba(0,0,0,.16); }
 
 

@@ -290,6 +290,8 @@ create table if not exists public.partido_stats (
   dentro_area int, fuera_area int, faltas int, corners int, offsides int,
   amarillas   int, rojas int, atajadas int, pases int, pases_ok int, pases_pct int,
   xg          numeric,
+  color       text,    -- color primario de la camiseta del jugador en ese partido (/fixtures/lineups)
+  color_gk    text,    -- color primario de la camiseta del arquero
   primary key (fixture_id, side)
 );
 alter table public.partido_stats enable row level security;
