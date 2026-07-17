@@ -24,7 +24,6 @@
 .sk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .sk-card { height: 74px; border-radius: 12px; }
 .sk-row { height: 42px; border-radius: 8px; margin: 6px; }
-@media (max-width: 620px) { .sk-grid { grid-template-columns: repeat(2, 1fr); } }
 
 /* ── Empty states ── */
 .empty { text-align: center; padding: 34px 20px; }

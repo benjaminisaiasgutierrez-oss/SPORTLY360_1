@@ -1,93 +1,10 @@
-/* SPORTLY360° · css/responsive.css — sistema responsive por dispositivo.
-   Niveles: Móvil <640px · Tablet 640–1023px · Laptop 1024–1439px (estilos base) · Desktop ≥1440px */
+/* SPORTLY360° · css/responsive.css — ESCALA UNIFORME.
+   El layout tiene un ancho de diseño fijo (1160px = sidebar 252 + panel 860 + márgenes)
+   y se ve IDÉNTICO en todos los dispositivos; solo cambia el tamaño:
 
-/* ══ MÓVIL + TABLET (<1024px): sidebar horizontal fija arriba ══ */
-@media (max-width: 1023px) {
-  .layout { flex-direction: column; }
-  .sidebar {
-    width: 100%; height: auto; position: sticky; top: 0; z-index: 50;
-    padding: 12px 14px; background: rgba(10,10,10,.96); backdrop-filter: blur(10px);
-  }
-  .sidebar-top { padding: 2px 2px 12px; }
-  .nav-label { display: none; }
-  .nav-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-  .nav-scroll::-webkit-scrollbar { display: none; }
-  .nav-list { flex-direction: row; gap: 8px; margin-bottom: 0; }
-  .nav-item { flex-shrink: 0; padding: 8px 14px 8px 9px; border: 1px solid var(--line); border-radius: 99px; }
-  .sidebar-footer { margin-top: 10px; padding-top: 10px; }
-  .sb-toggle { display: none; }   /* contraer no aplica con sidebar horizontal */
-}
+   1) Móvil/tablet: <meta name="viewport" content="width=1160"> hace que el navegador
+      del teléfono encaje el layout completo en el ancho de pantalla (escala nativa).
+   2) Ventanas de escritorio angostas (<1160px): js/ui.js aplica body.zoom = ancho/1160,
+      escalando todo proporcionalmente sin reacomodar paneles.
 
-/* ══ TABLET (640–1023px) ══ */
-@media (min-width: 640px) and (max-width: 1023px) {
-  .main { padding: 22px 20px 60px; }
-  .panel { padding: 24px 24px 32px; }
-  .pp-hero { margin: -24px -24px 4px; padding: 22px 24px 20px; }
-  .pp-grid { grid-template-columns: repeat(3, 1fr); }
-  .h2-feat-stats { grid-template-columns: repeat(3, 1fr); }
-  .tm-mini { grid-template-columns: repeat(2, 1fr); }
-  .fav-grid { grid-template-columns: repeat(2, 1fr); }
-  .cfg-grid { grid-template-columns: 1fr 1fr; }
-}
-
-/* Tablas: columnas secundarias ocultas en tablet chico (no cabe la tabla completa) */
-@media (min-width: 640px) and (max-width: 767px) {
-  thead th.hide-m, tbody td.hide-m { display: none; }
-}
-
-/* ══ MÓVIL (<640px) ══ */
-@media (max-width: 639px) {
-  .main { padding: 12px 10px 48px; }
-  .panel { padding: 18px 14px 26px; border-radius: 14px; }
-
-  /* hero de perfil (margen negativo acoplado al padding del panel) */
-  .pp-hero { margin: -18px -14px 4px; padding: 18px 14px 16px; gap: 14px; }
-  .pp-photo, .pp-photo .ph-wrap { width: 64px; height: 64px; }
-  .pp-photo .ph-init { font-size: 22px; }
-  .pp-name { font-size: 21px; }
-  .pp-hero .season-nav { margin-left: 0; }
-  .pp-hstat { padding: 7px 11px; min-width: 56px; }
-  .pp-hstat .v { font-size: 17px; }
-  .pp-grid { grid-template-columns: repeat(2, 1fr); }
-
-  /* chips de secciones: carrusel horizontal sin salto de línea */
-  .cc-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
-  .cc-chips::-webkit-scrollbar { display: none; }
-  .cc-chip { flex-shrink: 0; }
-
-  /* resumen del equipo: todo a una columna */
-  .tm-bento { grid-template-columns: 1fr; gap: 12px; }
-  .tm-mini { grid-template-columns: repeat(2, 1fr); }
-  .tm-ha { grid-template-columns: 1fr; }
-  .tm-ha-col:first-child { padding-right: 4px; }
-  .tm-ha-col + .tm-ha-col {
-    border-left: none; border-top: 1px solid #eceef0;
-    padding-left: 4px; padding-top: 14px; margin-top: 12px;
-  }
-  .tm-xg-lab { width: 86px; font-size: 11px; }
-
-  /* inicio */
-  .h2-hi { font-size: 21px; }
-  .h2-cols { grid-template-columns: 1fr; }
-  .h2-feat-stats { grid-template-columns: repeat(2, 1fr); }
-  .fav-grid { grid-template-columns: 1fr; }
-
-  /* configuración */
-  .cfg-grid { grid-template-columns: 1fr; }
-
-  /* tablas: columnas secundarias ocultas y scroll propio si no cabe */
-  thead th.hide-m, tbody td.hide-m { display: none; }
-  .card { overflow-x: auto; }
-}
-
-/* ══ DESKTOP (≥1440px): más ancho y aire ══ */
-@media (min-width: 1440px) {
-  .sidebar { width: 280px; }
-  .main { padding: 36px 32px 72px; }
-  .main-col { max-width: 1040px; }
-  .panel { max-width: 1040px; padding: 32px 36px 44px; }
-  .pp-hero { margin: -32px -36px 4px; padding: 28px 36px 26px; }
-  .pp-grid { grid-template-columns: repeat(4, 1fr); }
-  .tm-mini { grid-template-columns: repeat(4, 1fr); }
-  .h2-feat-stats { grid-template-columns: repeat(5, 1fr); }
-}
+   No hay media queries: el formato nunca cambia, solo su tamaño. */

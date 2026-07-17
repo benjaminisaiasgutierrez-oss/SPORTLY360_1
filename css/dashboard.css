@@ -36,9 +36,7 @@
     .qstat .qs-v { font-size: 15px; font-weight: 800; color: #14171a; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .qstat .qs-k { font-size: 10px; color: #8a9098; margin-top: 3px; text-transform: uppercase; letter-spacing: .3px; }
     .sk { background: linear-gradient(90deg, #eef0f2 25%, #f6f7f8 37%, #eef0f2 63%); background-size: 400% 100%; animation: skl 1.2s ease infinite; border-radius: 8px; }
-    @media (max-width: 820px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } .qstat-grid { grid-template-columns: repeat(2, 1fr); } }
     #sp-toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); background: #14171a; color: #fff; padding: 12px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.3); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 300; }
     #sp-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 620px) { .pp-grid { grid-template-columns: repeat(2, 1fr); } .pp-name { font-size: 23px; } }
 

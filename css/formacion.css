@@ -69,7 +69,3 @@
 .fpitch-lg .fp-name { font-size: 11px; max-width: 84px; margin-top: 2px; }
 .fpitch-lg::after { width: 86px; height: 86px; }
 
-@media (max-width: 620px) {
-  .fpitch-lg .fp-ava { width: 38px; height: 38px; }
-  .fpitch-lg .fp-name { font-size: 10px; }
-}

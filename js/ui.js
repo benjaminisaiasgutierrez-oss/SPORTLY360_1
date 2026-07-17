@@ -34,3 +34,16 @@
       try { if (typeof _snapLoc === 'function') sessionStorage.setItem('sp-nav', JSON.stringify(_snapLoc())); } catch (e) {}
     }
 
+    /* ═══ ESCALA UNIFORME (v2.4) ═══
+       El layout mide 1160px de diseño y se ve idéntico en todos los dispositivos.
+       En móvil/tablet escala el propio navegador (meta viewport width=1160).
+       En ventanas de escritorio más angostas que 1160px, se escala con zoom
+       proporcional para que todo el contenido quede visible sin scroll lateral. */
+    var DISENO_ANCHO = 1160;
+    function ajustarEscala() {
+      var w = document.documentElement.clientWidth;
+      document.body.style.zoom = (w > 0 && w < DISENO_ANCHO) ? String(w / DISENO_ANCHO) : '';
+    }
+    window.addEventListener('resize', ajustarEscala);
+    ajustarEscala();
+

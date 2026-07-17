@@ -49,4 +49,3 @@
 }
 .cfg-logout:hover { text-decoration: underline; }
 
-@media (max-width: 620px) { .cfg-grid { grid-template-columns: 1fr; } }

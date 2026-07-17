@@ -25,4 +25,3 @@
 .fav-card .fav-c { font-size: 11px; color: #9aa0a6; margin-top: 2px; }
 .fav-empty { background: #f7f8fa; border: 1px dashed #dfe2e6; border-radius: 12px; padding: 22px; text-align: center; color: #8a9098; font-size: 13px; }
 .fav-empty-ico { display: inline-flex; color: #c2c7cc; vertical-align: middle; }
-@media (max-width: 820px) { .fav-grid { grid-template-columns: repeat(2, 1fr); } }

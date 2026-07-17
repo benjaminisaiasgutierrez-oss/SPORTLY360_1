@@ -15,7 +15,6 @@
     .tv-stat.pend { opacity: .55; }
     .tv-stat.pend .tv-v { color: #9aa0a6; }
     .tv-v .nd { font-size: 11.5px; color: #b0b5ba; font-weight: 700; }
-    @media (max-width: 560px) { .tv-grid { grid-template-columns: repeat(2, 1fr); } }
 
     /* ═══ Resumen · tarjetas CLARAS (mismo estilo que Estadísticas / Avanzadas) ═══ */
     .tm-canvas {
@@ -87,5 +86,4 @@
     .tm-m-v.lime { color: var(--tm-accent); }
     .tm-m-k { font-size: 10.5px; color: var(--tm-faint); text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
 
-    @media (max-width: 620px) { .tm-bento { grid-template-columns: 1fr; } }
 
