@@ -272,12 +272,28 @@ create table if not exists public.partidos (
   visita_nombre   text, visita_logo text,
   gol_local       int, gol_visita int,
   es_local        boolean,           -- si "equipo" jugó de local
-  resultado       text               -- 'W' / 'D' / 'L' desde la óptica de "equipo"
+  resultado       text,              -- 'W' / 'D' / 'L' desde la óptica de "equipo"
+  fixture_id      bigint             -- id del partido en API-Football (enlaza con partido_stats)
 );
 create index if not exists idx_partidos_comp_temp_equipo on public.partidos(competicion_id, temporada, equipo, fecha);
 alter table public.partidos enable row level security;
 drop policy if exists "partidos_select_all" on public.partidos;
 create policy "partidos_select_all" on public.partidos for select using (true);
+
+-- Estadísticas por partido y por lado (home/away), de /fixtures/statistics.
+create table if not exists public.partido_stats (
+  fixture_id  bigint not null,
+  side        text not null,          -- 'home' | 'away'
+  equipo      text,
+  posesion    int, tiros int, tiros_arco int, tiros_fuera int, bloqueados int,
+  dentro_area int, fuera_area int, faltas int, corners int, offsides int,
+  amarillas   int, rojas int, atajadas int, pases int, pases_ok int, pases_pct int,
+  xg          numeric,
+  primary key (fixture_id, side)
+);
+alter table public.partido_stats enable row level security;
+drop policy if exists "partido_stats_select_all" on public.partido_stats;
+create policy "partido_stats_select_all" on public.partido_stats for select using (true);
 
 -- Ranking completo de asistencias por competición (no solo entre los goleadores).
 create table if not exists public.asistencias (

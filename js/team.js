@@ -1,6 +1,6 @@
 /* SPORTLY360° · js/team.js — refactor transparente: mismo código, solo reorganizado (no cambia diseño ni comportamiento). */
     /* ═══ VISTA DE EQUIPO (Jugadores / Generales / Avanzadas) ═══ */
-    var teamName = null, teamSeason = null, teamRow = null, teamStats = null, teamPlayers = [], teamInfo = null, teamMatches = [];
+    var teamName = null, teamSeason = null, teamRow = null, teamStats = null, teamPlayers = [], teamInfo = null, teamMatches = [], teamMatchStats = {};
 
     var teamFrom = 'comp';
     function verEquipo(equipo) { teamFrom = 'comp'; loadTeam(equipo, currentSeason); }
@@ -24,6 +24,15 @@
       teamStats = (r[2].data || [])[0] || null;
       teamInfo = (r[3].data || [])[0] || null;
       teamMatches = r[4].data || [];
+      /* Estadísticas por partido (para la pestaña Estadísticas) de los últimos partidos */
+      teamMatchStats = {};
+      var fids = teamMatches.map(function (m) { return m.fixture_id; }).filter(Boolean);
+      if (fids.length) {
+        var ps = await sb.from('partido_stats').select('*').in('fixture_id', fids);
+        (ps.data || []).forEach(function (row) {
+          (teamMatchStats[row.fixture_id] = teamMatchStats[row.fixture_id] || {})[row.side] = row;
+        });
+      }
       var posOrden = { Goalkeeper: 0, Defender: 1, Midfielder: 2, Attacker: 3 };
       teamPlayers = (r[1].data || []).sort(function(a, b) {
         var pa = posOrden[a.posicion], pb = posOrden[b.posicion];
@@ -91,6 +100,82 @@
       var m = document.getElementById('form-modal'); if (m) m.classList.add('hidden'); document.body.style.overflow = '';
     }
     function verFormJugador(nombre) { cerrarFormacion(); verJugador(nombre, 'team'); }
+
+    /* ═══ Estadísticas del último partido (selector de los últimos 5) ═══ */
+    function statMatchChips() {
+      return teamMatches.map(function (m, i) {
+        var mine = m.es_local ? m.gol_local : m.gol_visita;
+        var opp = m.es_local ? m.gol_visita : m.gol_local;
+        var rival = m.es_local ? m.visita_nombre : m.local_nombre;
+        var marc = (mine != null && opp != null) ? (mine + '-' + opp) : 'vs';
+        return '<button class="ms-chip' + (i === 0 ? ' active' : '') + '" id="ms-chip-' + i + '" onclick="setStatMatch(' + i + ')">' +
+          '<span class="ms-badge ms-' + (m.resultado || 'D') + '">' + marc + '</span>' + _short(rival) + '</button>';
+      }).join('');
+    }
+    function msRow(label, a, b, suf) {
+      suf = suf || '';
+      var na = (a == null ? 0 : a), nb = (b == null ? 0 : b), tot = na + nb;
+      var wa = tot ? Math.round(na / tot * 100) : 50, wb = 100 - wa;
+      var va = (a == null ? '&ndash;' : a + suf), vb = (b == null ? '&ndash;' : b + suf);
+      return '<div class="ms-stat"><div class="ms-top">' +
+          '<span class="ms-v' + (na >= nb ? ' win' : '') + '">' + va + '</span>' +
+          '<span class="ms-k">' + label + '</span>' +
+          '<span class="ms-v r">' + vb + '</span></div>' +
+        '<div class="ms-bars"><div class="ms-side l"><div class="ms-bar" style="width:' + wa + '%"></div></div>' +
+          '<div class="ms-side r"><div class="ms-bar" style="width:' + wb + '%"></div></div></div></div>';
+    }
+    function statMatchPanel(i) {
+      var m = teamMatches[i];
+      if (!m) return '';
+      var ps = teamMatchStats[m.fixture_id];
+      var mineSide = m.es_local ? 'home' : 'away', oppSide = m.es_local ? 'away' : 'home';
+      var A = ps && ps[mineSide], B = ps && ps[oppSide];
+      var mine = m.es_local ? m.gol_local : m.gol_visita, opp = m.es_local ? m.gol_visita : m.gol_local;
+      var rival = m.es_local ? m.visita_nombre : m.local_nombre;
+      var rivalLogo = m.es_local ? m.visita_logo : m.local_logo;
+      var resTxt = m.resultado === 'W' ? 'Victoria' : (m.resultado === 'L' ? 'Derrota' : 'Empate');
+      var fecha = m.fecha ? new Date(m.fecha).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+      var esc = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
+
+      var head = '<div class="ms-head">' +
+        '<div class="ms-h-team"><img src="' + esc(teamRow.logo) + '" onerror="this.style.visibility=\'hidden\'"><span>' + teamRow.equipo + '</span></div>' +
+        '<div class="ms-h-mid"><div class="ms-h-score">' + (mine != null ? mine : '-') + ' · ' + (opp != null ? opp : '-') + '</div>' +
+          '<div class="ms-h-res ms-' + (m.resultado || 'D') + '">' + resTxt + '</div>' +
+          '<div class="ms-h-meta">' + (m.es_local ? 'Local' : 'Visita') + ' &middot; ' + fecha + '</div></div>' +
+        '<div class="ms-h-team ms-h-r"><span>' + rival + '</span><img src="' + esc(rivalLogo) + '" onerror="this.style.visibility=\'hidden\'"></div>' +
+      '</div>';
+
+      if (!A || !B) return head + '<div class="tm-empty" style="margin-top:16px">Este partido aún no tiene estadísticas detalladas disponibles.</div>';
+
+      var poss = '';
+      if (A.posesion != null || B.posesion != null) {
+        var pa = A.posesion || 0, pb = B.posesion || (100 - pa);
+        poss = '<div class="ms-poss"><div class="l" style="flex:' + pa + '">' + pa + '%</div>' +
+          '<div class="r" style="flex:' + pb + '">' + pb + '%</div></div>';
+      }
+
+      var filas =
+        msRow('Goles esperados (xG)', A.xg != null ? Number(A.xg).toFixed(2) : null, B.xg != null ? Number(B.xg).toFixed(2) : null) +
+        msRow('Remates totales', A.tiros, B.tiros) +
+        msRow('Remates al arco', A.tiros_arco, B.tiros_arco) +
+        msRow('Córners', A.corners, B.corners) +
+        msRow('Faltas', A.faltas, B.faltas) +
+        msRow('Fuera de juego', A.offsides, B.offsides) +
+        msRow('Pases', A.pases, B.pases) +
+        msRow('Precisión de pase', A.pases_pct, B.pases_pct, '%') +
+        msRow('Atajadas', A.atajadas, B.atajadas) +
+        msRow('Amarillas', A.amarillas, B.amarillas);
+
+      return head + poss + '<div class="ms-filas">' + filas + '</div>';
+    }
+    function setStatMatch(i) {
+      teamMatches.forEach(function (_, k) {
+        var c = document.getElementById('ms-chip-' + k);
+        if (c) c.classList.toggle('active', k === i);
+      });
+      var panel = document.getElementById('ms-panel');
+      if (panel) panel.innerHTML = statMatchPanel(i);
+    }
 
     /* ── Panel de equipo PREMIUM (misma calidad que el perfil del jugador) ── */
     function renderTeam() {
@@ -229,11 +314,10 @@
           '<div class="tm-card tm-wide"><div class="tm-ch">Números de la temporada</div>' + numeros + '</div>' +
         '</div></div>';
 
-      var estadisticas = '<div class="tm-canvas tm-canvas-pad">' + ppSection(PPICO.rend, 'Rendimiento', [
-          ['Puntos/partido', pv(ppp, 2)], ['Goles/partido', pv(promGF, 2)], ['Recibidos/partido', pv(promGA, 2)], ['Dif. gol promedio', pv(dgProm, 2)],
-          ['% victorias', pv(winPct, 0, '%'), { bar: winPct }], ['% derrotas', pv(losePct, 0, '%'), { bar: losePct }],
-          ['% porterías imbatidas', pv(csPct, 0, '%'), { bar: csPct }], ['Tarjetas/partido', pv(cardsPP, 2)]
-        ]) + '</div>';
+      /* Estadísticas = comparativa del último partido, con selector de los últimos 5 */
+      var estadisticas = teamMatches.length
+        ? '<div class="ms-sel">' + statMatchChips() + '</div><div id="ms-panel">' + statMatchPanel(0) + '</div>'
+        : '<div class="tm-empty">Sin partidos recientes.</div>';
 
       var avanzadas = '<div class="tm-canvas tm-canvas-pad">' + ppSection(PPICO.ofe, 'Ofensivas', [
           ['Goles', pv(t.gf)], ['Promedio de goles', pv(promGF, 2)], ['Tiros', nd(es.tiros)], ['Tiros al arco', nd(es.tiros_arco)],

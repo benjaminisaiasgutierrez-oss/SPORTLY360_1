@@ -86,4 +86,51 @@
     .tm-m-v.lime { color: var(--tm-accent); }
     .tm-m-k { font-size: 10.5px; color: var(--tm-faint); text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
 
+    /* ═══ Estadísticas del partido (selector + comparativa) ═══ */
+    .ms-sel { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; margin-bottom: 6px; }
+    .ms-sel::-webkit-scrollbar { display: none; }
+    .ms-chip {
+      flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; border: 1px solid var(--line); border-radius: 99px;
+      padding: 7px 13px 7px 7px; font-size: 12.5px; font-weight: 700; color: var(--text);
+      cursor: pointer; font-family: inherit; transition: border-color .15s;
+    }
+    .ms-chip:hover { border-color: var(--acc-dark); }
+    .ms-chip.active { border-color: var(--accent); background: #f7fbe6; }
+    .ms-badge { font-size: 11px; font-weight: 800; color: #fff; border-radius: 6px; padding: 3px 7px; font-variant-numeric: tabular-nums; }
+    .ms-W { background: #2e7d32; } .ms-D { background: #616161; } .ms-L { background: #c62828; }
+
+    /* Cabecera del partido */
+    .ms-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #f7f8fa; border: 1px solid #eceef0; border-radius: 14px; padding: 16px; }
+    .ms-h-team { flex: 1; display: flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: 750; min-width: 0; }
+    .ms-h-team img { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; }
+    .ms-h-team span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ms-h-r { justify-content: flex-end; text-align: right; }
+    .ms-h-mid { text-align: center; flex-shrink: 0; }
+    .ms-h-score { font-size: 26px; font-weight: 850; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+    .ms-h-res { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: #fff; border-radius: 99px; padding: 2px 9px; margin-top: 5px; }
+    .ms-h-meta { font-size: 11px; color: var(--dim); margin-top: 5px; }
+
+    /* Posesión */
+    .ms-poss { display: flex; height: 32px; border-radius: 8px; overflow: hidden; gap: 2px; margin-top: 14px; }
+    .ms-poss > div { display: flex; align-items: center; font-size: 13px; font-weight: 800; padding: 0 12px; font-variant-numeric: tabular-nums; }
+    .ms-poss .l { background: var(--accent); color: #14171a; }
+    .ms-poss .r { background: #3a3f36; color: #fff; justify-content: flex-end; }
+
+    /* Filas comparativas */
+    .ms-filas { margin-top: 16px; }
+    .ms-stat { margin-bottom: 15px; }
+    .ms-stat:last-child { margin-bottom: 0; }
+    .ms-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .ms-v { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; width: 58px; color: var(--text); }
+    .ms-v.r { text-align: right; }
+    .ms-v.win { color: var(--acc-dark); }
+    .ms-k { font-size: 12px; color: var(--dim); font-weight: 600; text-align: center; }
+    .ms-bars { display: flex; gap: 3px; height: 7px; }
+    .ms-side { flex: 1; display: flex; }
+    .ms-side.l { justify-content: flex-end; }
+    .ms-bar { height: 100%; border-radius: 99px; }
+    .ms-side.l .ms-bar { background: linear-gradient(90deg, #9fce00, var(--accent)); }
+    .ms-side.r .ms-bar { background: #c9ced4; }
+
 
