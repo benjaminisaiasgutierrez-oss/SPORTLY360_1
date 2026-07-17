@@ -112,59 +112,68 @@
           '<span class="ms-badge ms-' + (m.resultado || 'D') + '">' + marc + '</span>' + _short(rival) + '</button>';
       }).join('');
     }
-    function msRow(label, a, b, suf) {
+    /* Fila comparativa: a = local (izquierda), b = visita (derecha).
+       homeOurs indica si el equipo local es "nuestro" (para pintarlo en lima). */
+    function msRow(label, a, b, homeOurs, suf) {
       suf = suf || '';
       var na = (a == null ? 0 : a), nb = (b == null ? 0 : b), tot = na + nb;
       var wa = tot ? Math.round(na / tot * 100) : 50, wb = 100 - wa;
       var va = (a == null ? '&ndash;' : a + suf), vb = (b == null ? '&ndash;' : b + suf);
+      var leftWin = homeOurs && na >= nb, rightWin = !homeOurs && nb >= na;
+      var leftBar = homeOurs ? 'ours' : 'rival', rightBar = homeOurs ? 'rival' : 'ours';
       return '<div class="ms-stat"><div class="ms-top">' +
-          '<span class="ms-v' + (na >= nb ? ' win' : '') + '">' + va + '</span>' +
+          '<span class="ms-v' + (leftWin ? ' win' : '') + '">' + va + '</span>' +
           '<span class="ms-k">' + label + '</span>' +
-          '<span class="ms-v r">' + vb + '</span></div>' +
-        '<div class="ms-bars"><div class="ms-side l"><div class="ms-bar" style="width:' + wa + '%"></div></div>' +
-          '<div class="ms-side r"><div class="ms-bar" style="width:' + wb + '%"></div></div></div></div>';
+          '<span class="ms-v r' + (rightWin ? ' win' : '') + '">' + vb + '</span></div>' +
+        '<div class="ms-bars"><div class="ms-side l"><div class="ms-bar ' + leftBar + '" style="width:' + wa + '%"></div></div>' +
+          '<div class="ms-side r"><div class="ms-bar ' + rightBar + '" style="width:' + wb + '%"></div></div></div></div>';
     }
     function statMatchPanel(i) {
       var m = teamMatches[i];
       if (!m) return '';
       var ps = teamMatchStats[m.fixture_id];
-      var mineSide = m.es_local ? 'home' : 'away', oppSide = m.es_local ? 'away' : 'home';
-      var A = ps && ps[mineSide], B = ps && ps[oppSide];
-      var mine = m.es_local ? m.gol_local : m.gol_visita, opp = m.es_local ? m.gol_visita : m.gol_local;
-      var rival = m.es_local ? m.visita_nombre : m.local_nombre;
-      var rivalLogo = m.es_local ? m.visita_logo : m.local_logo;
+      var H = ps && ps.home, A = ps && ps.away;   // H = local, A = visita
+      var homeOurs = !!m.es_local;                 // ¿el equipo local es el nuestro?
       var resTxt = m.resultado === 'W' ? 'Victoria' : (m.resultado === 'L' ? 'Derrota' : 'Empate');
       var fecha = m.fecha ? new Date(m.fecha).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
       var esc = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
+      var col = function (name, logo, ours, tag, right) {
+        var img = '<img src="' + esc(logo) + '" onerror="this.style.visibility=\'hidden\'">';
+        var info = '<div class="ms-h-info"><span class="ms-h-name">' + name + '</span>' +
+          '<span class="ms-h-tag' + (ours ? ' ours' : '') + '">' + tag + '</span></div>';
+        return '<div class="ms-h-team' + (right ? ' ms-h-r' : '') + (ours ? ' ms-ours' : '') + '">' +
+          (right ? info + img : img + info) + '</div>';
+      };
 
+      /* Cabecera: LOCAL a la izquierda, VISITA a la derecha (nuestro equipo resaltado) */
       var head = '<div class="ms-head">' +
-        '<div class="ms-h-team"><img src="' + esc(teamRow.logo) + '" onerror="this.style.visibility=\'hidden\'"><span>' + teamRow.equipo + '</span></div>' +
-        '<div class="ms-h-mid"><div class="ms-h-score">' + (mine != null ? mine : '-') + ' · ' + (opp != null ? opp : '-') + '</div>' +
+        col(m.local_nombre, m.local_logo, homeOurs, 'Local', false) +
+        '<div class="ms-h-mid"><div class="ms-h-score">' + (m.gol_local != null ? m.gol_local : '-') + ' · ' + (m.gol_visita != null ? m.gol_visita : '-') + '</div>' +
           '<div class="ms-h-res ms-' + (m.resultado || 'D') + '">' + resTxt + '</div>' +
-          '<div class="ms-h-meta">' + (m.es_local ? 'Local' : 'Visita') + ' &middot; ' + fecha + '</div></div>' +
-        '<div class="ms-h-team ms-h-r"><span>' + rival + '</span><img src="' + esc(rivalLogo) + '" onerror="this.style.visibility=\'hidden\'"></div>' +
+          '<div class="ms-h-meta">' + fecha + '</div></div>' +
+        col(m.visita_nombre, m.visita_logo, !homeOurs, 'Visita', true) +
       '</div>';
 
-      if (!A || !B) return head + '<div class="tm-empty" style="margin-top:16px">Este partido aún no tiene estadísticas detalladas disponibles.</div>';
+      if (!H || !A) return head + '<div class="tm-empty" style="margin-top:16px">Este partido aún no tiene estadísticas detalladas disponibles.</div>';
 
       var poss = '';
-      if (A.posesion != null || B.posesion != null) {
-        var pa = A.posesion || 0, pb = B.posesion || (100 - pa);
-        poss = '<div class="ms-poss"><div class="l" style="flex:' + pa + '">' + pa + '%</div>' +
-          '<div class="r" style="flex:' + pb + '">' + pb + '%</div></div>';
+      if (H.posesion != null || A.posesion != null) {
+        var ph = H.posesion || 0, pv = A.posesion || (100 - ph);
+        poss = '<div class="ms-poss"><div class="' + (homeOurs ? 'ours' : 'rival') + '" style="flex:' + ph + '">' + ph + '%</div>' +
+          '<div class="' + (homeOurs ? 'rival' : 'ours') + '" style="flex:' + pv + '">' + pv + '%</div></div>';
       }
 
       var filas =
-        msRow('Goles esperados (xG)', A.xg != null ? Number(A.xg).toFixed(2) : null, B.xg != null ? Number(B.xg).toFixed(2) : null) +
-        msRow('Remates totales', A.tiros, B.tiros) +
-        msRow('Remates al arco', A.tiros_arco, B.tiros_arco) +
-        msRow('Córners', A.corners, B.corners) +
-        msRow('Faltas', A.faltas, B.faltas) +
-        msRow('Fuera de juego', A.offsides, B.offsides) +
-        msRow('Pases', A.pases, B.pases) +
-        msRow('Precisión de pase', A.pases_pct, B.pases_pct, '%') +
-        msRow('Atajadas', A.atajadas, B.atajadas) +
-        msRow('Amarillas', A.amarillas, B.amarillas);
+        msRow('Goles esperados (xG)', H.xg != null ? Number(H.xg).toFixed(2) : null, A.xg != null ? Number(A.xg).toFixed(2) : null, homeOurs) +
+        msRow('Remates totales', H.tiros, A.tiros, homeOurs) +
+        msRow('Remates al arco', H.tiros_arco, A.tiros_arco, homeOurs) +
+        msRow('Córners', H.corners, A.corners, homeOurs) +
+        msRow('Faltas', H.faltas, A.faltas, homeOurs) +
+        msRow('Fuera de juego', H.offsides, A.offsides, homeOurs) +
+        msRow('Pases', H.pases, A.pases, homeOurs) +
+        msRow('Precisión de pase', H.pases_pct, A.pases_pct, homeOurs, '%') +
+        msRow('Atajadas', H.atajadas, A.atajadas, homeOurs) +
+        msRow('Amarillas', H.amarillas, A.amarillas, homeOurs);
 
       return head + poss + '<div class="ms-filas">' + filas + '</div>';
     }
