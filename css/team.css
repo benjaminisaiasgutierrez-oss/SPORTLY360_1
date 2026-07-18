@@ -86,9 +86,18 @@
     .tm-m-v.lime { color: var(--tm-accent); }
     .tm-m-k { font-size: 10.5px; color: var(--tm-faint); text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
 
-    /* ═══ Estadísticas del partido (selector + comparativa) ═══ */
-    .ms-sel { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; margin-bottom: 6px; }
-    .ms-sel::-webkit-scrollbar { display: none; }
+    /* ═══ Estadísticas del partido (selector con flechas + comparativa) ═══ */
+    .ms-selbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .ms-arrow {
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+      background: #fff; border: 1px solid var(--line); color: var(--text);
+      font-size: 18px; font-weight: 800; line-height: 1; cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; justify-content: center; transition: all .15s;
+    }
+    .ms-arrow:hover:not(:disabled) { border-color: var(--accent); color: var(--acc-dark); }
+    .ms-arrow:disabled { opacity: .35; cursor: default; }
+    .ms-strip { flex: 1; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px; scroll-behavior: smooth; }
+    .ms-strip::-webkit-scrollbar { display: none; }
     .ms-chip {
       flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px;
       background: #fff; border: 1px solid var(--line); border-radius: 99px;

@@ -18,15 +18,15 @@
         sb.from('plantilla').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name),
         sb.from('equipo_stats').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).limit(1),
         sb.from('equipos_info').select('*').eq('equipo', name).limit(1),
-        sb.from('partidos').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).order('fecha', { ascending: false }).limit(5)
+        sb.from('partidos').select('*').eq('competicion_id', currentId).eq('temporada', season).eq('equipo', name).order('fecha', { ascending: true })
       ]);
       teamRow = (r[0].data || [])[0] || null;
       teamStats = (r[2].data || [])[0] || null;
       teamInfo = (r[3].data || [])[0] || null;
-      teamMatches = r[4].data || [];
-      /* Estadísticas por partido (para la pestaña Estadísticas) de los últimos partidos */
+      teamMatches = r[4].data || [];   /* TODOS los partidos, ascendente (más antiguo → más reciente) */
+      /* Estadísticas por partido: solo cargo las de los últimos ~10 (las demás bajo demanda) */
       teamMatchStats = {};
-      var fids = teamMatches.map(function (m) { return m.fixture_id; }).filter(Boolean);
+      var fids = teamMatches.slice(-10).map(function (m) { return m.fixture_id; }).filter(Boolean);
       if (fids.length) {
         var ps = await sb.from('partido_stats').select('*').in('fixture_id', fids);
         (ps.data || []).forEach(function (row) {
@@ -101,16 +101,43 @@
     }
     function verFormJugador(nombre) { cerrarFormacion(); verJugador(nombre, 'team'); }
 
-    /* ═══ Estadísticas del último partido (selector de los últimos 5) ═══ */
+    /* ═══ Estadísticas por partido — TODOS los partidos de la temporada.
+       Orden: más antiguo (izq) → más reciente (der). Default = el más reciente. ═══ */
+    var _statIdx = 0;
     function statMatchChips() {
       return teamMatches.map(function (m, i) {
         var mine = m.es_local ? m.gol_local : m.gol_visita;
         var opp = m.es_local ? m.gol_visita : m.gol_local;
         var rival = m.es_local ? m.visita_nombre : m.local_nombre;
         var marc = (mine != null && opp != null) ? (mine + '-' + opp) : 'vs';
-        return '<button class="ms-chip' + (i === 0 ? ' active' : '') + '" id="ms-chip-' + i + '" onclick="setStatMatch(' + i + ')">' +
+        return '<button class="ms-chip' + (i === _statIdx ? ' active' : '') + '" id="ms-chip-' + i + '" onclick="setStatMatch(' + i + ')">' +
           '<span class="ms-badge ms-' + (m.resultado || 'D') + '">' + marc + '</span>' + _short(rival) + '</button>';
       }).join('');
+    }
+    function moveStatMatch(dir) { setStatMatch(_statIdx + dir); }
+    async function setStatMatch(i) {
+      i = Math.max(0, Math.min(teamMatches.length - 1, i));
+      _statIdx = i;
+      teamMatches.forEach(function (_, k) {
+        var c = document.getElementById('ms-chip-' + k);
+        if (c) c.classList.toggle('active', k === i);
+      });
+      var activo = document.getElementById('ms-chip-' + i);
+      if (activo && activo.scrollIntoView) activo.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+      /* flechas: deshabilitar en los extremos */
+      var pa = document.getElementById('ms-prev'), na = document.getElementById('ms-next');
+      if (pa) pa.disabled = (i <= 0);
+      if (na) na.disabled = (i >= teamMatches.length - 1);
+      /* carga bajo demanda de las estadísticas del partido elegido */
+      var m = teamMatches[i];
+      if (m && m.fixture_id && !teamMatchStats[m.fixture_id]) {
+        try {
+          var ps = await sb.from('partido_stats').select('*').eq('fixture_id', m.fixture_id);
+          (ps.data || []).forEach(function (row) { (teamMatchStats[row.fixture_id] = teamMatchStats[row.fixture_id] || {})[row.side] = row; });
+        } catch (e) { /* sin conexión: se mostrará "sin estadísticas" */ }
+      }
+      var panel = document.getElementById('ms-panel');
+      if (panel) panel.innerHTML = statMatchPanel(i);
     }
     /* Color de camiseta → estilo de barra (con contorno para que los kits claros
        también se vean sobre el fondo claro). Si no hay color, cae a lima/gris. */
@@ -150,21 +177,20 @@
       var resTxt = m.resultado === 'W' ? 'Victoria' : (m.resultado === 'L' ? 'Derrota' : 'Empate');
       var fecha = m.fecha ? new Date(m.fecha).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
       var esc = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
-      var col = function (name, logo, ours, tag, right) {
+      var col = function (name, logo, ours, right) {
         var img = '<img src="' + esc(logo) + '" onerror="this.style.visibility=\'hidden\'">';
-        var info = '<div class="ms-h-info"><span class="ms-h-name">' + name + '</span>' +
-          '<span class="ms-h-tag' + (ours ? ' ours' : '') + '">' + tag + '</span></div>';
+        var info = '<span class="ms-h-name">' + name + '</span>';
         return '<div class="ms-h-team' + (right ? ' ms-h-r' : '') + (ours ? ' ms-ours' : '') + '">' +
           (right ? info + img : img + info) + '</div>';
       };
 
-      /* Cabecera: LOCAL a la izquierda, VISITA a la derecha (nuestro equipo resaltado) */
+      /* Cabecera: LOCAL a la izquierda, VISITA a la derecha (nuestro equipo resaltado, sin etiquetas) */
       var head = '<div class="ms-head">' +
-        col(m.local_nombre, m.local_logo, homeOurs, 'Local', false) +
+        col(m.local_nombre, m.local_logo, homeOurs, false) +
         '<div class="ms-h-mid"><div class="ms-h-score">' + (m.gol_local != null ? m.gol_local : '-') + ' · ' + (m.gol_visita != null ? m.gol_visita : '-') + '</div>' +
           '<div class="ms-h-res ms-' + (m.resultado || 'D') + '">' + resTxt + '</div>' +
           '<div class="ms-h-meta">' + fecha + '</div></div>' +
-        col(m.visita_nombre, m.visita_logo, !homeOurs, 'Visita', true) +
+        col(m.visita_nombre, m.visita_logo, !homeOurs, true) +
       '</div>';
 
       if (!H || !A) return head + '<div class="tm-empty" style="margin-top:16px">Este partido aún no tiene estadísticas detalladas disponibles.</div>';
@@ -285,8 +311,8 @@
 
       var esc2 = function (s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); };
 
-      /* ── Bento 1: Últimos partidos ── */
-      var ultimos = teamMatches.length ? teamMatches.map(function (m) {
+      /* ── Bento 1: Últimos partidos (últimos 5, más reciente primero) ── */
+      var ultimos = teamMatches.length ? teamMatches.slice(-5).reverse().map(function (m) {
         var cls = m.resultado === 'W' ? 'W' : (m.resultado === 'L' ? 'L' : 'D');
         var marcador = (m.gol_local != null && m.gol_visita != null) ? (m.gol_local + '-' + m.gol_visita) : 'vs';
         return '<div class="tm-match">' +
@@ -345,10 +371,17 @@
           '<div class="tm-card tm-wide"><div class="tm-ch">Números de la temporada</div>' + numeros + '</div>' +
         '</div></div>';
 
-      /* Estadísticas = comparativa del último partido, con selector de los últimos 5 */
+      /* Estadísticas = comparativa por partido, con selector de TODA la temporada
+         (más antiguo izq → más reciente der), default el más reciente, flechas ‹ ›. */
+      _statIdx = teamMatches.length ? teamMatches.length - 1 : 0;
       var estadisticas = teamMatches.length
-        ? '<div class="ms-sel">' + statMatchChips() + '</div><div id="ms-panel">' + statMatchPanel(0) + '</div>'
-        : '<div class="tm-empty">Sin partidos recientes.</div>';
+        ? '<div class="ms-selbar">' +
+            '<button class="ms-arrow" id="ms-prev" onclick="moveStatMatch(-1)" aria-label="Partido anterior">&lsaquo;</button>' +
+            '<div class="ms-strip" id="ms-strip">' + statMatchChips() + '</div>' +
+            '<button class="ms-arrow" id="ms-next" onclick="moveStatMatch(1)" aria-label="Partido siguiente" disabled>&rsaquo;</button>' +
+          '</div>' +
+          '<div id="ms-panel">' + statMatchPanel(_statIdx) + '</div>'
+        : '<div class="tm-empty">Sin partidos disponibles.</div>';
 
       var avanzadas = '<div class="tm-canvas tm-canvas-pad">' + ppSection(PPICO.ofe, 'Ofensivas', [
           ['Goles', pv(t.gf)], ['Promedio de goles', pv(promGF, 2)], ['Tiros', nd(es.tiros)], ['Tiros al arco', nd(es.tiros_arco)],
@@ -363,7 +396,7 @@
       document.getElementById('team-view').innerHTML = hero +
         '<div class="cc-chips" id="team-chips" role="group" aria-label="Secciones del equipo">' +
           '<button class="cc-chip active" id="tchip-resumen" onclick="setTeamTab(\'resumen\')" aria-pressed="true">Resumen</button>' +
-          '<button class="cc-chip" id="tchip-jugadores" onclick="setTeamTab(\'jugadores\')" aria-pressed="false">Jugadores (' + teamPlayers.length + ')</button>' +
+          '<button class="cc-chip" id="tchip-jugadores" onclick="setTeamTab(\'jugadores\')" aria-pressed="false">Jugadores</button>' +
           '<button class="cc-chip" id="tchip-estadisticas" onclick="setTeamTab(\'estadisticas\')" aria-pressed="false">Estadísticas</button>' +
           '<button class="cc-chip" id="tchip-avanzadas" onclick="setTeamTab(\'avanzadas\')" aria-pressed="false">Avanzadas</button>' +
         '</div>' +
@@ -383,5 +416,10 @@
         var view = document.getElementById('team-view-' + k);
         if (view) view.classList.toggle('hidden', k !== t);
       });
+      /* al abrir Estadísticas, desplaza el selector al partido activo (el más reciente) */
+      if (t === 'estadisticas') {
+        var activo = document.getElementById('ms-chip-' + _statIdx);
+        if (activo && activo.scrollIntoView) activo.scrollIntoView({ inline: 'center', block: 'nearest' });
+      }
     }
 
